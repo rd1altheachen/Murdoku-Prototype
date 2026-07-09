@@ -37,6 +37,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .cell.region-花園{background:#1a3a2a}
 .cell.region-廚房{background:#3a2a1a}
 .cell.blocked{cursor:not-allowed}
+.cell.blocked:hover{filter:none}
 .cell .decoration{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:76px;opacity:.3;z-index:1;pointer-events:auto;cursor:help}
 .cell .decoration::after{content:attr(data-tip);display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #FFC107;border-radius:4px;padding:3px 8px;font-size:12px;color:#FFC107;white-space:nowrap;z-index:20;pointer-events:none}
 .cell .decoration:hover::after{display:block}
@@ -182,7 +183,7 @@ function renderBoard(){
     let content='';
     if(regLabel)content+=`<div class="region-tag">${regLabel}</div>`;
     if(deco)content+=`<div class="decoration" data-tip="${deco.name}">${deco.icon}</div>`;
-    if(blocked){const b=PUZZLE.blocked.find(b=>b.r===r&&b.c===c);content+=`<div class="decoration" data-tip="${b.name||''}（不可放置）">${b.icon}</div>`}
+    if(blocked){const b=PUZZLE.blocked.find(b=>b.r===r&&b.c===c);content+=`<div class="decoration" data-tip="${b.name||''}">${b.icon}</div>`}
     if(hasX)content+=`<div class="x-mark">✕</div>`;
     else if(hasAutoX&&!blocked)content+=`<div class="auto-x">✕</div>`;
     if(suspect)content+=`<div class="placed-suspect" style="color:${suspect.color}">${suspect.id}</div><div class="placed-name" style="color:${suspect.color}">${suspect.name}</div>`;
