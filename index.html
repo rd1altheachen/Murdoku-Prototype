@@ -45,7 +45,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .cell .placed-suspect{font-size:28px;font-weight:700}
 .cell .placed-name{font-size:11px;margin-top:2px}
 .cell .notes{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;position:relative;z-index:2}
-.cell .note{font-size:15px;font-weight:600;background:rgba(255,193,7,.15);color:#FFC107;padding:1px 4px;border-radius:3px}
+.cell .note{font-size:30px;font-weight:700;background:rgba(255,193,7,.15);color:#FFC107;padding:1px 4px;border-radius:3px}
 .cell .x-mark{position:absolute;font-size:42px;color:rgba(0,0,0,.6);font-weight:700;pointer-events:none}
 .cell .auto-x{position:absolute;font-size:36px;color:rgba(0,0,0,.6);font-weight:700;pointer-events:none}
 .cell.error{box-shadow:inset 0 0 0 3px #E94560}
@@ -110,12 +110,12 @@ const PUZZLE={
   decorations:[],
   blocked:[{r:4,c:1,icon:"🗿",name:"雕像"},{r:5,c:5,icon:"🧱",name:"壁爐"},{r:1,c:2,icon:"🏺",name:"花瓶"},{r:3,c:4,icon:"🧊",name:"冰箱"}],
   suspects:[
-    {id:"A",name:"Adam",color:"#e74c3c",clue:'Adam 在第 5 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
-    {id:"B",name:"Beth",color:"#3498db",clue:'Beth 跟花瓶<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>，且<span class="keyword">獨自<span class="kw-tooltip">該人所在的區域內沒有其他人</span></span>待著'},
-    {id:"C",name:"Carl",color:"#2ecc71",clue:'Carl 在廚房，在 Diana 的<span class="keyword">北邊<span class="kw-tooltip">上方的任何格子（跨區域）</span></span>'},
-    {id:"D",name:"Diana",color:"#9b59b6",clue:'Diana 跟冰箱<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>，在 Carl 的西邊'},
-    {id:"E",name:"Eric",color:"#f39c12",clue:'Eric 在 Victor 的<span class="keyword">北邊<span class="kw-tooltip">上方的任何格子（跨區域）</span></span>'},
-    {id:"V",name:"Victor",color:"#e67e22",clue:'Victor 在第 3 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>（被害者）'}
+    {id:"A",name:"Adam",color:"#E63946",clue:'Adam 在第 5 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
+    {id:"B",name:"Beth",color:"#457B9D",clue:'Beth 跟花瓶<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>，且<span class="keyword">獨自<span class="kw-tooltip">該人所在的區域內沒有其他人</span></span>待著'},
+    {id:"C",name:"Carl",color:"#2A9D8F",clue:'Carl 在廚房，在 Diana 的<span class="keyword">北邊<span class="kw-tooltip">上方的任何格子（跨區域）</span></span>'},
+    {id:"D",name:"Diana",color:"#E9C46A",clue:'Diana 跟冰箱<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>，在 Carl 的西邊'},
+    {id:"E",name:"Eric",color:"#8338EC",clue:'Eric 在 Victor 的<span class="keyword">北邊<span class="kw-tooltip">上方的任何格子（跨區域）</span></span>'},
+    {id:"V",name:"Victor",color:"#808080",clue:'Victor 在第 3 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>（被害者）'}
   ],
   solution:{A:[0,4],B:[1,1],C:[2,5],D:[3,3],E:[4,0],V:[5,2]},
   murderer:"E",murdererName:"Eric",
