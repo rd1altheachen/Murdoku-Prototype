@@ -75,7 +75,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
     <div class="logo">🔍 Murdoku 推理謎盤</div>
     <div class="timer" id="timer">00:00</div>
     <div class="puzzle-title">珠寶失竊案（困難 6×6）</div>
-    <div class="general-clue">📋 每<span class="keyword">行<span class="kw-tooltip">一橫排格子</span></span>每<span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>只能放一人。找出所有人的位置，揪出與 Victor 獨處在同一區域的兇手！<br><small>操作：點選人物→點格筆記 / 長按格放置</small></div>
+    <div class="general-clue">📋 規則：<br>• 每<span class="keyword">行<span class="kw-tooltip">一橫排格子</span></span>只能放一人<br>• 每<span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>只能放一人<br>• 找出與 Victor 獨處在同一區域的兇手<br><small>操作：點選人物→點格筆記 / 長按格放置</small></div>
     <div class="section-title">嫌疑人與線索</div>
     <div class="suspects-list" id="suspects"></div>
   </div>
@@ -107,16 +107,16 @@ const PUZZLE={
   decorations:[{r:1,c:2,icon:"🏺",name:"花瓶"},{r:3,c:4,icon:"🧊",name:"冰箱"}],
   blocked:[{r:4,c:1,icon:"🗿",name:"雕像"},{r:5,c:5,icon:"🧱",name:"壁爐"}],
   suspects:[
-    {id:"A",name:"Adam",color:"#e74c3c",clue:'Adam 在客廳、第 2 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
-    {id:"B",name:"Beth",color:"#3498db",clue:'Beth 在第 5 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
-    {id:"C",name:"Carl",color:"#2ecc71",clue:'Carl 跟花瓶<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，同一區域內</span></span>'},
-    {id:"D",name:"Diana",color:"#9b59b6",clue:'Diana 在花園，在 Carl 的<span class="keyword">南邊<span class="kw-tooltip">下方的任何格子（跨區域）</span></span>'},
-    {id:"E",name:"Eric",color:"#f39c12",clue:'Eric 在廚房'},
-    {id:"V",name:"Victor",color:"#e67e22",clue:'Victor 在第 6 <span class="keyword">行<span class="kw-tooltip">一橫排格子</span></span>（被害者）'}
+    {id:"A",name:"Adam",color:"#e74c3c",clue:'Adam 在第 5 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
+    {id:"B",name:"Beth",color:"#3498db",clue:'Beth 跟花瓶<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>'},
+    {id:"C",name:"Carl",color:"#2ecc71",clue:'Carl 在第 6 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
+    {id:"D",name:"Diana",color:"#9b59b6",clue:'Diana 跟冰箱<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>'},
+    {id:"E",name:"Eric",color:"#f39c12",clue:'Eric 在 Beth 的<span class="keyword">南邊<span class="kw-tooltip">下方的任何格子（跨區域）</span></span>'},
+    {id:"V",name:"Victor",color:"#e67e22",clue:'Victor 在第 3 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>（被害者）'}
   ],
-  solution:{A:[0,1],B:[1,4],C:[2,2],D:[3,0],E:[4,5],V:[5,3]},
+  solution:{A:[0,4],B:[1,1],C:[2,5],D:[3,3],E:[4,0],V:[5,2]},
   murderer:"E",murdererName:"Eric",
-  story:"Eric 在廚房與 Victor 獨處，趁機痛下殺手並偷走了珠寶！"
+  story:"Eric 在花園與 Victor 獨處，趁夜色掩護犯下了罪行！"
 };
 const TOTAL=6;
 
