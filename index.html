@@ -37,7 +37,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .cell.region-花園{background:#1a3a2a}
 .cell.region-廚房{background:#3a2a1a}
 .cell.blocked{background:#111!important;cursor:not-allowed;opacity:.5}
-.cell .decoration{position:absolute;font-size:20px;opacity:.5;top:4px;right:4px}
+.cell .decoration{position:absolute;font-size:28px;opacity:.6;top:4px;right:4px;cursor:help}
 .cell .region-tag{position:absolute;bottom:2px;left:4px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);text-shadow:0 0 4px rgba(0,0,0,.8)}
 .cell .placed-suspect{font-size:28px;font-weight:700}
 .cell .placed-name{font-size:11px;margin-top:2px}
@@ -108,10 +108,10 @@ const PUZZLE={
   blocked:[{r:4,c:1,icon:"🗿",name:"雕像"},{r:5,c:5,icon:"🧱",name:"壁爐"}],
   suspects:[
     {id:"A",name:"Adam",color:"#e74c3c",clue:'Adam 在第 5 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
-    {id:"B",name:"Beth",color:"#3498db",clue:'Beth 跟花瓶<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>'},
-    {id:"C",name:"Carl",color:"#2ecc71",clue:'Carl 在第 6 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
-    {id:"D",name:"Diana",color:"#9b59b6",clue:'Diana 跟冰箱<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>'},
-    {id:"E",name:"Eric",color:"#f39c12",clue:'Eric 在 Beth 的<span class="keyword">南邊<span class="kw-tooltip">下方的任何格子（跨區域）</span></span>'},
+    {id:"B",name:"Beth",color:"#3498db",clue:'Beth 跟花瓶<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>，且<span class="keyword">獨自<span class="kw-tooltip">該人所在的區域內沒有其他人</span></span>待著'},
+    {id:"C",name:"Carl",color:"#2ecc71",clue:'Carl 在廚房，在 Diana 的<span class="keyword">北邊<span class="kw-tooltip">上方的任何格子（跨區域）</span></span>'},
+    {id:"D",name:"Diana",color:"#9b59b6",clue:'Diana 跟冰箱<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>，在 Carl 的西邊'},
+    {id:"E",name:"Eric",color:"#f39c12",clue:'Eric 在 Victor 的<span class="keyword">北邊<span class="kw-tooltip">上方的任何格子（跨區域）</span></span>'},
     {id:"V",name:"Victor",color:"#e67e22",clue:'Victor 在第 3 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>（被害者）'}
   ],
   solution:{A:[0,4],B:[1,1],C:[2,5],D:[3,3],E:[4,0],V:[5,2]},
@@ -208,6 +208,11 @@ function cellClick(r,c){
 function placeSuspect(r,c){
   if(!state.selected)return;const key=ck(r,c);pushHistory();
   for(const k of Object.keys(state.placements)){if(state.placements[k]===state.selected)delete state.placements[k]}
+  // Clear this person's notes from ALL cells
+  for(const k of Object.keys(state.notes)){
+    const idx=state.notes[k].indexOf(state.selected);
+    if(idx>=0)state.notes[k].splice(idx,1);
+  }
   state.placements[key]=state.selected;state.notes[key]=[];delete state.xMarks[key];
   render();saveState();
 }
