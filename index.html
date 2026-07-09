@@ -106,23 +106,22 @@ const PUZZLE = {
   decorations: [{r:1,c:2,icon:"🏺",name:"花瓶"},{r:3,c:4,icon:"🧊",name:"冰箱"}],
   blocked: [{r:4,c:1,icon:"🗿"},{r:5,c:5,icon:"🧱"}],
   suspects: [
-    {id:"A",name:"Adam",color:"#e74c3c",clue:"Adam 在第 6 列"},
-    {id:"B",name:"Beth",color:"#3498db",clue:"Beth 跟花瓶相鄰"},
-    {id:"C",name:"Carl",color:"#2ecc71",clue:"Carl 跟冰箱相鄰"},
-    {id:"D",name:"Diana",color:"#9b59b6",clue:"Diana 在第 3 列"},
-    {id:"E",name:"Eric",color:"#f39c12",clue:"Eric 在 Beth 的南邊"},
-    {id:"F",name:"Fiona",color:"#1abc9c",clue:"Fiona 在花園"},
-    {id:"V",name:"Victor",color:"#e67e22",clue:"Victor 在書房（被害者）"}
+    {id:"A",name:"Adam",color:"#e74c3c",clue:"Adam 在第 2 列"},
+    {id:"B",name:"Beth",color:"#3498db",clue:"Beth 在第 5 列"},
+    {id:"C",name:"Carl",color:"#2ecc71",clue:"Carl 跟花瓶相鄰"},
+    {id:"D",name:"Diana",color:"#9b59b6",clue:"Diana 在花園"},
+    {id:"E",name:"Eric",color:"#f39c12",clue:"Eric 不在客廳"},
+    {id:"V",name:"Victor",color:"#e67e22",clue:"Victor 在第 6 行（被害者）"}
   ],
   // Solution: [row, col] (0-indexed)
-  solution: {A:[0,5],B:[1,1],C:[2,4],D:[3,2],E:[4,3],F:[5,0],V:[0,4]},
-  murderer:"A",
-  murdererName:"Adam",
-  story:"Adam 趁派對混亂潛入書房，與 Victor 獨處時痛下殺手，並偷走了珠寶！"
+  solution: {A:[0,1],B:[1,4],C:[2,2],D:[3,0],E:[4,5],V:[5,3]},
+  murderer:"E",
+  murdererName:"Eric",
+  story:"Eric 在廚房與 Victor 獨處，趁機痛下殺手並偷走了珠寶！"
 };
 
 let state={selected:null,xMode:false,placements:{},notes:{},xMarks:{},history:[],startTime:Date.now(),solved:false};
-const TOTAL=7; // 6 suspects + V
+const TOTAL=6; // 5 suspects + V
 
 function cellKey(r,c){return`${r},${c}`}
 function getRegion(r,c){for(const[n,reg] of Object.entries(PUZZLE.regions)){if(reg.cells.some(([rr,cc])=>rr===r&&cc===c))return n}return null}
