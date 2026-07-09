@@ -105,9 +105,9 @@ const PUZZLE={
   // Region label positions: one cell per region to show the name
   regionLabels:{客廳:[0,0],書房:[0,5],花園:[5,0],廚房:[5,4]},
   decorations:[{r:1,c:2,icon:"🏺",name:"花瓶"},{r:3,c:4,icon:"🧊",name:"冰箱"}],
-  blocked:[{r:4,c:1,icon:"🗿"},{r:5,c:5,icon:"🧱"}],
+  blocked:[{r:4,c:1,icon:"🗿",name:"雕像"},{r:5,c:5,icon:"🧱",name:"壁爐"}],
   suspects:[
-    {id:"A",name:"Adam",color:"#e74c3c",clue:'Adam 在第 2 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
+    {id:"A",name:"Adam",color:"#e74c3c",clue:'Adam 在第 1 <span class="keyword">行<span class="kw-tooltip">一橫排格子</span></span>、第 2 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
     {id:"B",name:"Beth",color:"#3498db",clue:'Beth 在第 5 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
     {id:"C",name:"Carl",color:"#2ecc71",clue:'Carl 跟花瓶<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，同一區域內</span></span>'},
     {id:"D",name:"Diana",color:"#9b59b6",clue:'Diana 在花園'},
@@ -129,15 +129,15 @@ function getDecoration(r,c){return PUZZLE.decorations.find(d=>d.r===r&&d.c===c)}
 function regionBorders(r,c){const reg=getRegion(r,c);let cls=[];if(r>0&&getRegion(r-1,c)!==reg)cls.push('border-top');if(r<5&&getRegion(r+1,c)!==reg)cls.push('border-bottom');if(c>0&&getRegion(r,c-1)!==reg)cls.push('border-left');if(c<5&&getRegion(r,c+1)!==reg)cls.push('border-right');return cls.join(' ')}
 function isRegionLabel(r,c){for(const[n,pos] of Object.entries(PUZZLE.regionLabels)){if(pos[0]===r&&pos[1]===c)return n}return null}
 
-// Auto-X: mark row/col when someone is placed
+// Auto-X: mark row/col when someone is placed + clear notes
 function computeAutoX(){
   const ax={};
   for(const[key,sid] of Object.entries(state.placements)){
     const[r,c]=key.split(',').map(Number);
     for(let i=0;i<6;i++){
       const rk=ck(r,i),ck2=ck(i,c);
-      if(rk!==key&&!state.placements[rk])ax[rk]=true;
-      if(ck2!==key&&!state.placements[ck2])ax[ck2]=true;
+      if(rk!==key&&!state.placements[rk]){ax[rk]=true;if(state.notes[rk])state.notes[rk]=[]}
+      if(ck2!==key&&!state.placements[ck2]){ax[ck2]=true;if(state.notes[ck2])state.notes[ck2]=[]}
     }
   }
   state.autoX=ax;
@@ -179,8 +179,8 @@ function renderBoard(){
     const regLabel=isRegionLabel(r,c);
     let content='';
     if(regLabel)content+=`<div class="region-tag">${regLabel}</div>`;
-    if(deco)content+=`<div class="decoration">${deco.icon}</div>`;
-    if(blocked)content+=`<div style="font-size:28px;opacity:.6">${PUZZLE.blocked.find(b=>b.r===r&&b.c===c).icon}</div>`;
+    if(deco)content+=`<div class="decoration" title="${deco.name}">${deco.icon}</div>`;
+    if(blocked){const b=PUZZLE.blocked.find(b=>b.r===r&&b.c===c);content+=`<div style="font-size:28px;opacity:.6" title="${b.name||''}（不可放置）">${b.icon}</div>`}
     if(hasX)content+=`<div class="x-mark">✕</div>`;
     else if(hasAutoX&&!blocked)content+=`<div class="auto-x">✕</div>`;
     if(suspect)content+=`<div class="placed-suspect" style="color:${suspect.color}">${suspect.id}</div><div class="placed-name" style="color:${suspect.color}">${suspect.name}</div>`;
