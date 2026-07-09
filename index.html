@@ -17,15 +17,16 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .puzzle-title{font-size:14px;font-weight:600;margin-bottom:8px;color:#53A8B6}
 .general-clue{background:#0F3460;border-radius:8px;padding:10px;margin-bottom:12px;font-size:12px;color:#9E9E9E;line-height:1.4}
 .section-title{font-size:13px;font-weight:600;color:#FFC107;margin-bottom:6px}
-.suspects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
-.suspect-card{background:#0F3460;border:2px solid transparent;border-radius:6px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .2s;user-select:none}
-.suspect-card:hover{border-color:#53A8B6}
-.suspect-card.selected{border-color:#FFC107;background:#1a2a4e;box-shadow:0 0 8px rgba(255,193,7,.3)}
-.suspect-card.placed{opacity:.4}
-.suspect-card .avatar{width:36px;height:36px;border-radius:4px;background:#53A8B6;display:flex;align-items:center;justify-content:center;margin:0 auto 4px;font-size:16px;font-weight:700;color:#fff}
-.suspect-card .name{font-size:11px;font-weight:600}
-.clue-item{font-size:12px;padding:5px 8px;margin-bottom:3px;border-radius:4px;background:#0F3460;line-height:1.3;transition:background .2s}
-.clue-item.highlighted{background:#2a1a0e;border-left:3px solid #FFC107}
+.suspects-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.suspect-row{background:#0F3460;border:2px solid transparent;border-radius:6px;padding:8px;cursor:pointer;transition:all .2s;user-select:none;display:flex;align-items:flex-start;gap:10px}
+.suspect-row:hover{border-color:#53A8B6}
+.suspect-row.selected{border-color:#FFC107;background:#1a2a4e;box-shadow:0 0 8px rgba(255,193,7,.3)}
+.suspect-row.placed{opacity:.4}
+.suspect-row .avatar{width:36px;height:36px;min-width:36px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff}
+.suspect-row .info{flex:1}
+.suspect-row .name{font-size:12px;font-weight:600;margin-bottom:3px}
+.suspect-row .clue{font-size:11px;color:#9E9E9E;line-height:1.3}
+.suspect-row.selected .clue{color:#FFC107}
 
 /* Center Panel - Board */
 .center-panel{display:flex;align-items:center;justify-content:center;padding:16px;background:#1A1A2E}
@@ -84,11 +85,9 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
     <div class="logo">🔍 Murdoku 推理謎盤</div>
     <div class="timer" id="timer">00:00</div>
     <div class="puzzle-title">珠寶失竊案（困難 6×6）</div>
-    <div class="general-clue">📋 每行只能放一位嫌疑人，每列只能放一位嫌疑人。找出所有人的位置，揪出與管家獨處在同一區域的兇手！</div>
+    <div class="general-clue">📋 每行只能放一位嫌疑人，每列只能放一位嫌疑人。找出所有人的位置，揪出與 Victor 獨處在同一區域的兇手！</div>
     <div class="section-title">嫌疑人（點選→點格筆記 / 長按格放置）</div>
-    <div class="suspects-grid" id="suspects"></div>
-    <div class="section-title">📌 線索</div>
-    <div id="clues"></div>
+    <div class="suspects-list" id="suspects"></div>
   </div>
   <div class="center-panel"><div class="board" id="board"></div></div>
   <div class="right-panel">
@@ -121,33 +120,33 @@ const PUZZLE = {
   },
   decorations: [{r:1,c:2,icon:"🏺",name:"花瓶"},{r:3,c:4,icon:"🧊",name:"冰箱"}],
   blocked: [{r:4,c:1,icon:"🗿",name:"雕像"},{r:5,c:5,icon:"🧱",name:"壁爐"}],
-  victim: {r:0,c:4,name:"管家",region:"B"},
+  victim: {r:0,c:4,name:"Victor",region:"B"},
   suspects: [
-    {id:"S1",name:"陳先生",avatar:"陳",color:"#e74c3c"},
-    {id:"S2",name:"李小姐",avatar:"李",color:"#3498db"},
-    {id:"S3",name:"王教授",avatar:"王",color:"#2ecc71"},
-    {id:"S4",name:"張女士",avatar:"張",color:"#9b59b6"},
-    {id:"S5",name:"趙公子",avatar:"趙",color:"#f39c12"},
-    {id:"S6",name:"周阿姨",avatar:"周",color:"#1abc9c"}
+    {id:"S1",name:"Adam",avatar:"A",color:"#e74c3c",clues:["Adam 在第 1 行","Adam 在客廳（A 區）","Adam 不在第 1 列"]},
+    {id:"S2",name:"Beth",avatar:"B",color:"#3498db",clues:["Beth 在花園（C 區）","Beth 在第 4 行"]},
+    {id:"S3",name:"Carl",avatar:"C",color:"#2ecc71",clues:["Carl 跟花瓶相鄰（上下左右）","Carl 不在書房（B 區）"]},
+    {id:"S4",name:"Diana",avatar:"D",color:"#9b59b6",clues:["Diana 在 Eric 的南邊（行號較大）"]},
+    {id:"S5",name:"Eric",avatar:"E",color:"#f39c12",clues:["Eric 在第 2 行"]},
+    {id:"S6",name:"Fiona",avatar:"F",color:"#1abc9c",clues:["Fiona 在廚房（D 區）","Fiona 跟冰箱相鄰（上下左右）"]}
   ],
   clues: [
-    {id:1,text:"陳先生在第 1 行",related:["S1"]},
-    {id:2,text:"李小姐在花園（C 區）",related:["S2"]},
-    {id:3,text:"王教授跟花瓶相鄰（上下左右）",related:["S3"]},
-    {id:4,text:"張女士在趙公子的南邊（行號較大）",related:["S4","S5"]},
-    {id:5,text:"周阿姨在廚房（D 區）",related:["S6"]},
-    {id:6,text:"趙公子在第 2 行",related:["S5"]},
-    {id:7,text:"王教授不在書房（B 區）",related:["S3"]},
-    {id:8,text:"李小姐在第 4 行",related:["S2"]},
-    {id:9,text:"周阿姨跟冰箱相鄰（上下左右）",related:["S6"]},
-    {id:10,text:"陳先生在客廳（A 區）",related:["S1"]},
-    {id:11,text:"陳先生不在第 1 列",related:["S1"]}
+    {id:1,text:"Adam 在第 1 行",related:["S1"]},
+    {id:2,text:"Beth 在花園（C 區）",related:["S2"]},
+    {id:3,text:"Carl 跟花瓶相鄰（上下左右）",related:["S3"]},
+    {id:4,text:"Diana 在 Eric 的南邊（行號較大）",related:["S4","S5"]},
+    {id:5,text:"Fiona 在廚房（D 區）",related:["S6"]},
+    {id:6,text:"Eric 在第 2 行",related:["S5"]},
+    {id:7,text:"Carl 不在書房（B 區）",related:["S3"]},
+    {id:8,text:"Beth 在第 4 行",related:["S2"]},
+    {id:9,text:"Fiona 跟冰箱相鄰（上下左右）",related:["S6"]},
+    {id:10,text:"Adam 在客廳（A 區）",related:["S1"]},
+    {id:11,text:"Adam 不在第 1 列",related:["S1"]}
   ],
   // Solution: row,col (0-indexed)
   solution: {S1:[0,1],S2:[3,0],S3:[2,2],S4:[5,3],S5:[1,5],S6:[4,4]},
   murderer:"S5",
-  murdererName:"趙公子",
-  story:"趙公子趁派對混亂，潛入書房與管家獨處，並趁機偷走了珠寶！"
+  murdererName:"Eric",
+  story:"Eric 趁派對混亂，潛入書房與 Victor 獨處，並趁機偷走了珠寶！"
 };
 
 // === STATE ===
@@ -162,20 +161,15 @@ function getDecoration(r,c){return PUZZLE.decorations.find(d=>d.r===r&&d.c===c)}
 function regionBorders(r,c){const reg=getRegion(r,c);let cls=[];if(r>0&&getRegion(r-1,c)!==reg)cls.push('border-top');if(r<5&&getRegion(r+1,c)!==reg)cls.push('border-bottom');if(c>0&&getRegion(r,c-1)!==reg)cls.push('border-left');if(c<5&&getRegion(r,c+1)!==reg)cls.push('border-right');return cls.join(' ')}
 
 // === RENDER ===
-function render(){renderSuspects();renderClues();renderBoard();updateSubmit()}
+function render(){renderSuspects();renderBoard();updateSubmit()}
 function renderSuspects(){
   document.getElementById('suspects').innerHTML=PUZZLE.suspects.map(s=>{
     const placed=Object.entries(state.placements).some(([k,v])=>v===s.id);
     const sel=state.selected===s.id;
-    return `<div class="suspect-card ${sel?'selected':''} ${placed?'placed':''}" onclick="selectSuspect('${s.id}')">
+    const clueHtml=s.clues.map(c=>`<div class="clue">${c}</div>`).join('');
+    return `<div class="suspect-row ${sel?'selected':''} ${placed?'placed':''}" onclick="selectSuspect('${s.id}')">
       <div class="avatar" style="background:${s.color}">${s.avatar}</div>
-      <div class="name">${s.name}</div></div>`;
-  }).join('');
-}
-function renderClues(){
-  document.getElementById('clues').innerHTML=PUZZLE.clues.map(c=>{
-    const hl=state.selected&&c.related.includes(state.selected);
-    return `<div class="clue-item ${hl?'highlighted':''}">${c.id}. ${c.text}</div>`;
+      <div class="info"><div class="name">${s.name}</div>${clueHtml}</div></div>`;
   }).join('');
 }
 function renderBoard(){
@@ -194,7 +188,7 @@ function renderBoard(){
     const suspect=placed?PUZZLE.suspects.find(s=>s.id===placed):null;
     
     let content='';
-    if(victim)content+=`<div class="victim-mark">💀管家</div>`;
+    if(victim)content+=`<div class="victim-mark">💀Victor</div>`;
     if(deco)content+=`<div class="decoration">${deco.icon}</div>`;
     if(blocked)content+=`<div style="font-size:24px;opacity:.6">${PUZZLE.blocked.find(b=>b.r===r&&b.c===c).icon}</div>`;
     if(hasX)content+=`<div class="x-mark">✕</div>`;
