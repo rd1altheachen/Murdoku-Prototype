@@ -6,449 +6,322 @@
 <title>Murdoku 推理謎盤 - 珠寶失竊案</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Noto Sans TC', sans-serif; background: #1A1A2E; color: #EAEAEA; min-height: 100vh; }
-
-/* Layout */
-.game-container { display: grid; grid-template-columns: 30% 1fr 15%; height: 100vh; gap: 0; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;height:100vh;overflow:hidden}
+.game-container{display:grid;grid-template-columns:280px 1fr 160px;height:100vh}
 
 /* Left Panel */
-.left-panel { background: #16213E; padding: 16px; overflow-y: auto; border-right: 1px solid #2a2a4e; }
-.logo { font-size: 20px; font-weight: 700; color: #E94560; margin-bottom: 8px; }
-.timer { font-size: 24px; font-weight: 600; color: #FFC107; margin-bottom: 12px; font-variant-numeric: tabular-nums; }
-.puzzle-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #53A8B6; }
-.general-clue { background: #0F3460; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 13px; color: #9E9E9E; line-height: 1.5; }
+.left-panel{background:#16213E;padding:14px;overflow-y:auto;border-right:1px solid #2a2a4e}
+.logo{font-size:18px;font-weight:700;color:#E94560;margin-bottom:4px}
+.timer{font-size:22px;font-weight:600;color:#FFC107;margin-bottom:8px;font-variant-numeric:tabular-nums}
+.puzzle-title{font-size:14px;font-weight:600;margin-bottom:8px;color:#53A8B6}
+.general-clue{background:#0F3460;border-radius:8px;padding:10px;margin-bottom:12px;font-size:12px;color:#9E9E9E;line-height:1.4}
+.section-title{font-size:13px;font-weight:600;color:#FFC107;margin-bottom:6px}
+.suspects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.suspect-card{background:#0F3460;border:2px solid transparent;border-radius:6px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .2s;user-select:none}
+.suspect-card:hover{border-color:#53A8B6}
+.suspect-card.selected{border-color:#FFC107;background:#1a2a4e;box-shadow:0 0 8px rgba(255,193,7,.3)}
+.suspect-card.placed{opacity:.4}
+.suspect-card .avatar{width:36px;height:36px;border-radius:4px;background:#53A8B6;display:flex;align-items:center;justify-content:center;margin:0 auto 4px;font-size:16px;font-weight:700;color:#fff}
+.suspect-card .name{font-size:11px;font-weight:600}
+.clue-item{font-size:12px;padding:5px 8px;margin-bottom:3px;border-radius:4px;background:#0F3460;line-height:1.3;transition:background .2s}
+.clue-item.highlighted{background:#2a1a0e;border-left:3px solid #FFC107}
 
-/* Suspects */
-.suspects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
-.suspect-card { background: #0F3460; border: 2px solid transparent; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.2s; user-select: none; }
-.suspect-card:hover { border-color: #53A8B6; }
-.suspect-card.selected { border-color: #FFC107; background: #1a2a4e; box-shadow: 0 0 10px rgba(255,193,7,0.3); }
-.suspect-card.placed { opacity: 0.4; }
-.suspect-card .avatar { width: 40px; height: 40px; border-radius: 50%; background: #53A8B6; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 18px; font-weight: 700; }
-.suspect-card .name { font-size: 13px; font-weight: 600; }
-.suspect-card .id { font-size: 11px; color: #9E9E9E; }
+/* Center Panel - Board */
+.center-panel{display:flex;align-items:center;justify-content:center;padding:16px;background:#1A1A2E}
+.board{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:3px solid #444}
+.cell{width:90px;height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .15s;border:1px solid #333;user-select:none}
+.cell:hover{filter:brightness(1.2)}
+.cell.region-A{background:#1a3a5a}
+.cell.region-B{background:#2a1a3a}
+.cell.region-C{background:#1a3a2a}
+.cell.region-D{background:#3a2a1a}
+.cell.blocked{background:#111!important;cursor:not-allowed;opacity:.5}
+.cell.has-decoration{position:relative}
+.cell .decoration{position:absolute;font-size:20px;opacity:.5;top:4px;right:4px}
+.cell .victim-mark{position:absolute;font-size:14px;top:2px;left:4px;color:#E94560}
+.cell .room-label{position:absolute;bottom:2px;left:4px;font-size:9px;color:rgba(255,255,255,.3)}
+.cell .placed-suspect{font-size:22px;font-weight:700;color:#4CAF50}
+.cell .placed-name{font-size:10px;color:#4CAF50;margin-top:2px}
+.cell .notes{display:flex;flex-wrap:wrap;gap:1px;justify-content:center}
+.cell .note{font-size:9px;background:rgba(255,193,7,.2);color:#FFC107;padding:0 3px;border-radius:2px}
+.cell .x-mark{position:absolute;font-size:40px;color:rgba(233,69,96,.4);font-weight:700;pointer-events:none}
+.cell.error{box-shadow:inset 0 0 0 3px #E94560}
+.cell.correct{box-shadow:inset 0 0 0 3px #4CAF50}
 
-/* Clues */
-.clues-section { margin-top: 12px; }
-.clues-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #FFC107; }
-.clue-item { font-size: 13px; padding: 6px 8px; margin-bottom: 4px; border-radius: 4px; background: #0F3460; line-height: 1.4; transition: background 0.2s; }
-.clue-item.highlighted { background: #2a1a0e; border-left: 3px solid #FFC107; }
-
-/* Center - Board */
-.center-panel { display: flex; align-items: center; justify-content: center; padding: 24px; background: #1A1A2E; }
-.board { display: grid; gap: 4px; }
-.cell { background: #0F3460; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: all 0.2s; border: 2px solid #2a2a4e; min-width: 120px; min-height: 120px; user-select: none; }
-.cell:hover { border-color: #53A8B6; }
-.cell .room-name { font-size: 11px; color: #9E9E9E; position: absolute; top: 4px; left: 6px; }
-.cell .room-objects { font-size: 10px; color: #555; position: absolute; bottom: 4px; left: 6px; }
-.cell .placed-suspect { font-size: 28px; font-weight: 700; color: #4CAF50; }
-.cell .placed-name { font-size: 11px; color: #4CAF50; }
-.cell .notes { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; }
-.cell .note { font-size: 10px; background: #1a2a4e; color: #FFC107; padding: 1px 4px; border-radius: 3px; }
-.cell .x-mark { position: absolute; font-size: 48px; color: rgba(233,69,96,0.5); font-weight: 700; pointer-events: none; }
-.cell.error { border-color: #E94560; background: #2a1020; }
-.cell.correct { border-color: #4CAF50; }
+/* Region borders (thick) */
+.cell.border-top{border-top:3px solid #888}
+.cell.border-bottom{border-bottom:3px solid #888}
+.cell.border-left{border-left:3px solid #888}
+.cell.border-right{border-right:3px solid #888}
 
 /* Right Panel */
-.right-panel { background: #16213E; padding: 12px; display: flex; flex-direction: column; gap: 10px; border-left: 1px solid #2a2a4e; }
-.tool-btn { background: #0F3460; border: 1px solid #2a2a4e; border-radius: 6px; padding: 10px; text-align: center; cursor: pointer; font-size: 12px; color: #EAEAEA; transition: all 0.2s; user-select: none; }
-.tool-btn:hover { border-color: #53A8B6; }
-.tool-btn.active { border-color: #FFC107; background: #2a1a0e; color: #FFC107; }
-.tool-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+.right-panel{background:#16213E;padding:10px;display:flex;flex-direction:column;gap:8px;border-left:1px solid #2a2a4e}
+.tool-btn{background:#0F3460;border:1px solid #2a2a4e;border-radius:6px;padding:8px;text-align:center;cursor:pointer;font-size:11px;color:#EAEAEA;transition:all .2s;user-select:none}
+.tool-btn:hover{border-color:#53A8B6}
+.tool-btn.active{border-color:#FFC107;background:#2a1a0e;color:#FFC107}
+.submit-btn{margin-top:auto;background:#E94560;color:#fff;border:none;border-radius:6px;padding:12px 8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.submit-btn.disabled{background:#333;cursor:not-allowed;color:#666}
+.submit-btn:hover:not(.disabled){box-shadow:0 4px 12px rgba(233,69,96,.4)}
 
-/* Submit */
-.submit-btn { margin-top: auto; background: #E94560; color: #fff; border: none; border-radius: 6px; padding: 14px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-.submit-btn:hover:not(.disabled) { transform: scale(1.02); box-shadow: 0 4px 12px rgba(233,69,96,0.4); }
-.submit-btn.disabled { background: #444; cursor: not-allowed; color: #999; }
+/* Overlay */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:100;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+.overlay.show{display:flex}
+.overlay h1{font-size:40px;margin-bottom:12px}
+.overlay .reveal{font-size:20px;color:#E94560;margin-bottom:8px}
+.overlay .story{font-size:14px;color:#9E9E9E;margin-bottom:16px;max-width:400px}
+.overlay .time-display{font-size:16px;color:#FFC107;margin-bottom:20px}
+.overlay button{background:#53A8B6;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:14px;cursor:pointer}
 
-/* Success overlay */
-.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; flex-direction: column; }
-.overlay.show { display: flex; }
-.overlay h1 { font-size: 48px; margin-bottom: 16px; }
-.overlay .murderer-reveal { font-size: 24px; color: #E94560; margin-bottom: 12px; }
-.overlay .time-display { font-size: 18px; color: #9E9E9E; margin-bottom: 24px; }
-.overlay button { background: #53A8B6; color: #fff; border: none; border-radius: 6px; padding: 12px 24px; font-size: 16px; cursor: pointer; }
-
-/* Long press indicator */
-.cell.pressing { animation: pulse 0.5s ease; }
-@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(0.95); } 100% { transform: scale(1); } }
+/* Error overlay */
+.error-toast{position:fixed;top:20px;right:20px;background:#E94560;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;display:none;z-index:50;animation:slideIn .3s}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
 </style>
 </head>
 <body>
 <div class="game-container">
-  <!-- Left Panel -->
   <div class="left-panel">
     <div class="logo">🔍 Murdoku 推理謎盤</div>
     <div class="timer" id="timer">00:00</div>
-    <div class="puzzle-title">珠寶失竊案（困難）</div>
-    <div class="general-clue">
-      📋 通用規則：5 位嫌疑人分別在 5 個不同房間。每人恰好在一個房間中。透過線索推理找出每人位置！
-    </div>
-    
+    <div class="puzzle-title">珠寶失竊案（困難 6×6）</div>
+    <div class="general-clue">📋 每行只能放一位嫌疑人，每列只能放一位嫌疑人。找出所有人的位置，揪出與管家獨處在同一區域的兇手！</div>
+    <div class="section-title">嫌疑人（點選→點格筆記 / 長按格放置）</div>
     <div class="suspects-grid" id="suspects"></div>
-    
-    <div class="clues-section">
-      <div class="clues-title">📌 線索清單</div>
-      <div id="clues"></div>
-    </div>
+    <div class="section-title">📌 線索</div>
+    <div id="clues"></div>
   </div>
-  
-  <!-- Center Panel -->
-  <div class="center-panel">
-    <div class="board" id="board" style="grid-template-columns: repeat(5, 1fr);"></div>
-  </div>
-  
-  <!-- Right Panel -->
+  <div class="center-panel"><div class="board" id="board"></div></div>
   <div class="right-panel">
-    <div class="tool-btn" id="btn-close" onclick="confirmExit()">✕ 退出</div>
-    <div class="tool-btn" id="btn-clear" onmousedown="startClear()" onmouseup="endClear()" ontouchstart="startClear()" ontouchend="endClear()">🗑 清除全部<br><span style="font-size:10px;color:#9E9E9E">（長按）</span></div>
-    <div class="tool-btn" id="btn-undo" onclick="undo()">↩ 撤銷</div>
+    <div class="tool-btn" onclick="confirmExit()">✕ 退出</div>
+    <div class="tool-btn" onmousedown="startClear()" onmouseup="endClear()" ontouchstart="startClear()" ontouchend="endClear()">🗑 清除全部<br><small style="color:#9E9E9E">（長按）</small></div>
+    <div class="tool-btn" onclick="undo()">↩ 撤銷</div>
     <div class="tool-btn" id="btn-x" onclick="toggleXMode()">✖ 標記排除</div>
-    <button class="submit-btn disabled" id="btn-submit" onclick="submitAnswer()">提交<br><span style="font-size:11px">（請先放置所有人）</span></button>
+    <div class="tool-btn" onclick="showHelp()">❓ 玩法</div>
+    <button class="submit-btn disabled" id="btn-submit" onclick="submitAnswer()">提交<br><small>（請先放置所有人）</small></button>
   </div>
 </div>
-
-<!-- Success Overlay -->
 <div class="overlay" id="overlay">
   <h1>🎉 破案成功！</h1>
-  <div class="murderer-reveal" id="murderer-text"></div>
+  <div class="reveal" id="murderer-text"></div>
+  <div class="story" id="story-text"></div>
   <div class="time-display" id="result-time"></div>
   <button onclick="resetGame()">重新開始</button>
 </div>
+<div class="error-toast" id="error-toast">有放置錯誤，請檢查紅色標記的格子</div>
 
 <script>
-// === PUZZLE DATA ===
+// === PUZZLE DATA (困難 6×6) ===
 const PUZZLE = {
-  title: "珠寶失竊案",
-  difficulty: "困難",
-  gridSize: 5,
-  rooms: [
-    { id: "R1", name: "客廳", objects: "沙發、花瓶" },
-    { id: "R2", name: "書房", objects: "書架、檯燈" },
-    { id: "R3", name: "廚房", objects: "刀架、冰箱" },
-    { id: "R4", name: "走廊", objects: "衣帽架、鏡子" },
-    { id: "R5", name: "花園", objects: "噴泉、長椅" },
-  ],
+  gridSize: 6,
+  regions: {
+    A: {name:"客廳",cells:[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]]},
+    B: {name:"書房",cells:[[0,3],[0,4],[0,5],[1,3],[1,4],[1,5]]},
+    C: {name:"花園",cells:[[2,0],[2,1],[2,2],[3,0],[3,1],[3,2],[4,0],[4,1],[4,2],[5,0],[5,1],[5,2]]},
+    D: {name:"廚房",cells:[[2,3],[2,4],[2,5],[3,3],[3,4],[3,5],[4,3],[4,4],[4,5],[5,3],[5,4],[5,5]]}
+  },
+  decorations: [{r:1,c:2,icon:"🏺",name:"花瓶"},{r:3,c:4,icon:"🧊",name:"冰箱"}],
+  blocked: [{r:4,c:1,icon:"🗿",name:"雕像"},{r:5,c:5,icon:"🧱",name:"壁爐"}],
+  victim: {r:0,c:4,name:"管家",region:"B"},
   suspects: [
-    { id: "S1", name: "陳先生", desc: "商人，穿西裝", avatar: "陳" },
-    { id: "S2", name: "李小姐", desc: "畫家，戴貝雷帽", avatar: "李" },
-    { id: "S3", name: "王教授", desc: "大學教授，戴眼鏡", avatar: "王" },
-    { id: "S4", name: "張女士", desc: "主人妹妹，穿紅洋裝", avatar: "張" },
-    { id: "S5", name: "林管家", desc: "管家，穿燕尾服", avatar: "林" },
+    {id:"S1",name:"陳先生",avatar:"陳",color:"#e74c3c"},
+    {id:"S2",name:"李小姐",avatar:"李",color:"#3498db"},
+    {id:"S3",name:"王教授",avatar:"王",color:"#2ecc71"},
+    {id:"S4",name:"張女士",avatar:"張",color:"#9b59b6"},
+    {id:"S5",name:"趙公子",avatar:"趙",color:"#f39c12"},
+    {id:"S6",name:"周阿姨",avatar:"周",color:"#1abc9c"}
   ],
   clues: [
-    { id: 1, text: "林管家在走廊（R4）", relatedSuspects: ["S5"] },
-    { id: 2, text: "陳先生不在客廳", relatedSuspects: ["S1"] },
-    { id: 3, text: "李小姐不在花園", relatedSuspects: ["S2"] },
-    { id: 4, text: "王教授的房間編號和張女士的房間編號相鄰（差1）", relatedSuspects: ["S3", "S4"] },
-    { id: 5, text: "陳先生的房間編號比李小姐大", relatedSuspects: ["S1", "S2"] },
-    { id: 6, text: "王教授不在書房", relatedSuspects: ["S3"] },
-    { id: 7, text: "張女士和林管家的房間編號差2", relatedSuspects: ["S4", "S5"] },
-    { id: 8, text: "張女士不在客廳", relatedSuspects: ["S4"] },
-    { id: 9, text: "李小姐的房間編號比王教授大", relatedSuspects: ["S2", "S3"] },
+    {id:1,text:"陳先生在第 1 行",related:["S1"]},
+    {id:2,text:"李小姐在花園（C 區）",related:["S2"]},
+    {id:3,text:"王教授跟花瓶相鄰（上下左右）",related:["S3"]},
+    {id:4,text:"張女士在趙公子的南邊（行號較大）",related:["S4","S5"]},
+    {id:5,text:"周阿姨在廚房（D 區）",related:["S6"]},
+    {id:6,text:"趙公子在第 2 行",related:["S5"]},
+    {id:7,text:"王教授不在書房（B 區）",related:["S3"]},
+    {id:8,text:"李小姐在第 4 行",related:["S2"]},
+    {id:9,text:"周阿姨跟冰箱相鄰（上下左右）",related:["S6"]},
+    {id:10,text:"陳先生在客廳（A 區）",related:["S1"]},
+    {id:11,text:"陳先生不在第 1 列",related:["S1"]}
   ],
-  solution: { R1: "S3", R2: "S4", R3: "S2", R4: "S5", R5: "S1" },
-  murderer: "S4",
-  murdererName: "張女士",
-  story: "張女士在書房獨自面對珠寶展示櫃，趁無人注意偷走了珠寶！"
+  // Solution: row,col (0-indexed)
+  solution: {S1:[0,1],S2:[3,0],S3:[2,2],S4:[5,3],S5:[1,5],S6:[4,4]},
+  murderer:"S5",
+  murdererName:"趙公子",
+  story:"趙公子趁派對混亂，潛入書房與管家獨處，並趁機偷走了珠寶！"
 };
 
-// === GAME STATE ===
-let state = {
-  selectedSuspect: null,
-  xMode: false,
-  placements: {},      // { R1: "S3", ... }
-  notes: {},           // { R1: ["S1","S3"], ... }
-  xMarks: {},          // { R1: true, ... }
-  history: [],         // undo stack
-  startTime: Date.now(),
-  solved: false,
-};
+// === STATE ===
+let state = {selected:null,xMode:false,placements:{},notes:{},xMarks:{},history:[],startTime:Date.now(),solved:false};
 
-// === INIT ===
-function init() {
-  loadState();
-  renderSuspects();
-  renderClues();
-  renderBoard();
-  updateSubmitButton();
-  startTimer();
-}
+// === HELPERS ===
+function cellKey(r,c){return `${r},${c}`}
+function getRegion(r,c){for(const[id,reg] of Object.entries(PUZZLE.regions)){if(reg.cells.some(([rr,cc])=>rr===r&&cc===c))return id}return null}
+function isBlocked(r,c){return PUZZLE.blocked.some(b=>b.r===r&&b.c===c)}
+function isVictim(r,c){return PUZZLE.victim.r===r&&PUZZLE.victim.c===c}
+function getDecoration(r,c){return PUZZLE.decorations.find(d=>d.r===r&&d.c===c)}
+function regionBorders(r,c){const reg=getRegion(r,c);let cls=[];if(r>0&&getRegion(r-1,c)!==reg)cls.push('border-top');if(r<5&&getRegion(r+1,c)!==reg)cls.push('border-bottom');if(c>0&&getRegion(r,c-1)!==reg)cls.push('border-left');if(c<5&&getRegion(r,c+1)!==reg)cls.push('border-right');return cls.join(' ')}
 
 // === RENDER ===
-function renderSuspects() {
-  const container = document.getElementById('suspects');
-  container.innerHTML = PUZZLE.suspects.map(s => {
-    const placed = Object.values(state.placements).includes(s.id);
-    const selected = state.selectedSuspect === s.id;
-    return `<div class="suspect-card ${selected ? 'selected' : ''} ${placed ? 'placed' : ''}" 
-                 onclick="selectSuspect('${s.id}')">
-      <div class="avatar">${s.avatar}</div>
-      <div class="name">${s.name}</div>
-      <div class="id">${s.id}</div>
-    </div>`;
+function render(){renderSuspects();renderClues();renderBoard();updateSubmit()}
+function renderSuspects(){
+  document.getElementById('suspects').innerHTML=PUZZLE.suspects.map(s=>{
+    const placed=Object.entries(state.placements).some(([k,v])=>v===s.id);
+    const sel=state.selected===s.id;
+    return `<div class="suspect-card ${sel?'selected':''} ${placed?'placed':''}" onclick="selectSuspect('${s.id}')">
+      <div class="avatar" style="background:${s.color}">${s.avatar}</div>
+      <div class="name">${s.name}</div></div>`;
   }).join('');
 }
-
-function renderClues() {
-  const container = document.getElementById('clues');
-  container.innerHTML = PUZZLE.clues.map(c => {
-    const highlighted = state.selectedSuspect && c.relatedSuspects.includes(state.selectedSuspect);
-    return `<div class="clue-item ${highlighted ? 'highlighted' : ''}">${c.id}. ${c.text}</div>`;
+function renderClues(){
+  document.getElementById('clues').innerHTML=PUZZLE.clues.map(c=>{
+    const hl=state.selected&&c.related.includes(state.selected);
+    return `<div class="clue-item ${hl?'highlighted':''}">${c.id}. ${c.text}</div>`;
   }).join('');
 }
-
-function renderBoard() {
-  const container = document.getElementById('board');
-  container.innerHTML = PUZZLE.rooms.map(room => {
-    const placed = state.placements[room.id];
-    const notes = state.notes[room.id] || [];
-    const hasX = state.xMarks[room.id];
-    const suspect = placed ? PUZZLE.suspects.find(s => s.id === placed) : null;
+function renderBoard(){
+  const board=document.getElementById('board');
+  let html='';
+  for(let r=0;r<6;r++){for(let c=0;c<6;c++){
+    const key=cellKey(r,c);
+    const reg=getRegion(r,c);
+    const blocked=isBlocked(r,c);
+    const victim=isVictim(r,c);
+    const deco=getDecoration(r,c);
+    const placed=state.placements[key];
+    const notes=state.notes[key]||[];
+    const hasX=state.xMarks[key];
+    const borders=regionBorders(r,c);
+    const suspect=placed?PUZZLE.suspects.find(s=>s.id===placed):null;
     
-    return `<div class="cell" id="cell-${room.id}" 
-                 onclick="cellClick('${room.id}')" 
-                 onmousedown="cellMouseDown('${room.id}')" 
-                 onmouseup="cellMouseUp('${room.id}')"
-                 ontouchstart="cellMouseDown('${room.id}')"
-                 ontouchend="cellMouseUp('${room.id}')">
-      <div class="room-name">${room.name}</div>
-      <div class="room-objects">${room.objects}</div>
-      ${hasX ? '<div class="x-mark">✕</div>' : ''}
-      ${suspect ? `<div class="placed-suspect">${suspect.avatar}</div><div class="placed-name">${suspect.name}</div>` : ''}
-      ${!suspect && notes.length > 0 ? `<div class="notes">${notes.map(n => {
-        const s = PUZZLE.suspects.find(x => x.id === n);
-        return `<span class="note">${s.avatar}</span>`;
-      }).join('')}</div>` : ''}
-    </div>`;
-  }).join('');
+    let content='';
+    if(victim)content+=`<div class="victim-mark">💀管家</div>`;
+    if(deco)content+=`<div class="decoration">${deco.icon}</div>`;
+    if(blocked)content+=`<div style="font-size:24px;opacity:.6">${PUZZLE.blocked.find(b=>b.r===r&&b.c===c).icon}</div>`;
+    if(hasX)content+=`<div class="x-mark">✕</div>`;
+    if(suspect)content+=`<div class="placed-suspect" style="color:${suspect.color}">${suspect.avatar}</div><div class="placed-name">${suspect.name}</div>`;
+    else if(!blocked&&notes.length>0)content+=`<div class="notes">${notes.map(n=>{const s=PUZZLE.suspects.find(x=>x.id===n);return `<span class="note" style="color:${s.color}">${s.avatar}</span>`}).join('')}</div>`;
+    
+    const regLabel=PUZZLE.regions[reg]?PUZZLE.regions[reg].name:'';
+    html+=`<div class="cell region-${reg} ${blocked?'blocked':''} ${borders}" id="cell-${key}" 
+      data-r="${r}" data-c="${c}"
+      onclick="cellClick(${r},${c})" onmousedown="cellDown(${r},${c})" onmouseup="cellUp()" ontouchstart="cellDown(${r},${c})" ontouchend="cellUp()">
+      <div class="room-label">${regLabel}</div>${content}</div>`;
+  }}
+  board.innerHTML=html;
 }
 
 // === INTERACTIONS ===
-function selectSuspect(id) {
-  if (state.solved) return;
-  if (state.xMode) { state.xMode = false; document.getElementById('btn-x').classList.remove('active'); }
-  state.selectedSuspect = state.selectedSuspect === id ? null : id;
-  renderSuspects();
-  renderClues();
+function selectSuspect(id){
+  if(state.solved)return;
+  if(state.xMode){state.xMode=false;document.getElementById('btn-x').classList.remove('active')}
+  state.selected=state.selected===id?null:id;
+  render();
+}
+function toggleXMode(){
+  if(state.solved)return;
+  state.xMode=!state.xMode;
+  if(state.xMode){state.selected=null}
+  document.getElementById('btn-x').classList.toggle('active',state.xMode);
+  render();
 }
 
-function toggleXMode() {
-  if (state.solved) return;
-  state.xMode = !state.xMode;
-  if (state.xMode) { state.selectedSuspect = null; renderSuspects(); renderClues(); }
-  document.getElementById('btn-x').classList.toggle('active', state.xMode);
+let pressTimer=null;
+function cellDown(r,c){
+  if(state.solved||isBlocked(r,c)||isVictim(r,c))return;
+  pressTimer=setTimeout(()=>{placeSuspect(r,c);pressTimer=null},500);
 }
+function cellUp(){if(pressTimer){clearTimeout(pressTimer);pressTimer=null}}
 
-let pressTimer = null;
-let pressedRoom = null;
-
-function cellMouseDown(roomId) {
-  if (state.solved) return;
-  pressedRoom = roomId;
-  pressTimer = setTimeout(() => {
-    placeSuspect(roomId);
-    pressTimer = null;
-  }, 500);
-}
-
-function cellMouseUp(roomId) {
-  if (pressTimer) {
-    clearTimeout(pressTimer);
-    pressTimer = null;
-    // Short click
-    cellClick(roomId);
-  }
-}
-
-function cellClick(roomId) {
-  if (state.solved) return;
-  
-  if (state.xMode) {
+function cellClick(r,c){
+  if(state.solved||isBlocked(r,c)||isVictim(r,c))return;
+  const key=cellKey(r,c);
+  if(state.xMode){
     pushHistory();
-    if (state.xMarks[roomId]) {
-      delete state.xMarks[roomId];
-    } else {
-      state.xMarks[roomId] = true;
-      state.notes[roomId] = []; // Clear notes when marking X
-    }
-    renderBoard();
-    saveState();
-    return;
+    if(state.xMarks[key])delete state.xMarks[key];
+    else{state.xMarks[key]=true;state.notes[key]=[]}
+    render();saveState();return;
   }
-  
-  if (!state.selectedSuspect) return;
-  if (state.placements[roomId]) return; // Already has someone placed
-  
-  // Toggle note
+  if(!state.selected)return;
+  if(state.placements[key])return;
   pushHistory();
-  if (!state.notes[roomId]) state.notes[roomId] = [];
-  const idx = state.notes[roomId].indexOf(state.selectedSuspect);
-  if (idx >= 0) {
-    state.notes[roomId].splice(idx, 1);
-  } else {
-    state.notes[roomId].push(state.selectedSuspect);
-  }
-  renderBoard();
-  saveState();
+  if(!state.notes[key])state.notes[key]=[];
+  const idx=state.notes[key].indexOf(state.selected);
+  if(idx>=0)state.notes[key].splice(idx,1);
+  else state.notes[key].push(state.selected);
+  render();saveState();
 }
 
-function placeSuspect(roomId) {
-  if (state.solved) return;
-  if (!state.selectedSuspect) return;
-  
+function placeSuspect(r,c){
+  if(!state.selected)return;
+  const key=cellKey(r,c);
   pushHistory();
-  
-  // Remove from previous position if placed elsewhere
-  for (const [key, val] of Object.entries(state.placements)) {
-    if (val === state.selectedSuspect) delete state.placements[key];
-  }
-  
-  // Place
-  state.placements[roomId] = state.selectedSuspect;
-  state.notes[roomId] = []; // Clear notes
-  delete state.xMarks[roomId]; // Clear X
-  
-  renderBoard();
-  renderSuspects();
-  updateSubmitButton();
-  saveState();
+  // Remove from previous
+  for(const k of Object.keys(state.placements)){if(state.placements[k]===state.selected)delete state.placements[k]}
+  state.placements[key]=state.selected;
+  state.notes[key]=[];
+  delete state.xMarks[key];
+  render();saveState();
 }
 
 // === TOOLS ===
-function undo() {
-  if (state.solved || state.history.length === 0) return;
-  const prev = state.history.pop();
-  state.placements = prev.placements;
-  state.notes = prev.notes;
-  state.xMarks = prev.xMarks;
-  renderBoard();
-  renderSuspects();
-  updateSubmitButton();
-  saveState();
+function undo(){
+  if(state.solved||!state.history.length)return;
+  const prev=state.history.pop();
+  state.placements=prev.placements;state.notes=prev.notes;state.xMarks=prev.xMarks;
+  render();saveState();
 }
-
-let clearTimer = null;
-function startClear() {
-  clearTimer = setTimeout(() => {
-    if (state.solved) return;
-    pushHistory();
-    state.placements = {};
-    state.notes = {};
-    state.xMarks = {};
-    renderBoard();
-    renderSuspects();
-    updateSubmitButton();
-    saveState();
-  }, 1000);
-}
-function endClear() { if (clearTimer) { clearTimeout(clearTimer); clearTimer = null; } }
-
-function pushHistory() {
-  state.history.push({
-    placements: { ...state.placements },
-    notes: JSON.parse(JSON.stringify(state.notes)),
-    xMarks: { ...state.xMarks },
-  });
-  if (state.history.length > 50) state.history.shift();
-}
+let clearT=null;
+function startClear(){clearT=setTimeout(()=>{if(state.solved)return;pushHistory();state.placements={};state.notes={};state.xMarks={};render();saveState()},1000)}
+function endClear(){if(clearT){clearTimeout(clearT);clearT=null}}
+function pushHistory(){state.history.push({placements:{...state.placements},notes:JSON.parse(JSON.stringify(state.notes)),xMarks:{...state.xMarks}});if(state.history.length>50)state.history.shift()}
 
 // === SUBMIT ===
-function updateSubmitButton() {
-  const btn = document.getElementById('btn-submit');
-  const allPlaced = Object.keys(state.placements).length === PUZZLE.gridSize;
-  btn.classList.toggle('disabled', !allPlaced);
-  btn.innerHTML = allPlaced ? '提交答案' : '提交<br><span style="font-size:11px">（請先放置所有人）</span>';
+function updateSubmit(){
+  const btn=document.getElementById('btn-submit');
+  const count=Object.keys(state.placements).length;
+  const ready=count===6;
+  btn.classList.toggle('disabled',!ready);
+  btn.innerHTML=ready?'🔍 提交答案':`提交<br><small>（已放 ${count}/6 人）</small>`;
 }
-
-function submitAnswer() {
-  const btn = document.getElementById('btn-submit');
-  if (btn.classList.contains('disabled')) return;
-  
-  // Check answer
-  let allCorrect = true;
-  for (const room of PUZZLE.rooms) {
-    const cell = document.getElementById(`cell-${room.id}`);
-    cell.classList.remove('error', 'correct');
-    if (state.placements[room.id] === PUZZLE.solution[room.id]) {
-      cell.classList.add('correct');
-    } else {
-      cell.classList.add('error');
-      allCorrect = false;
-    }
+function submitAnswer(){
+  if(document.getElementById('btn-submit').classList.contains('disabled'))return;
+  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('error','correct'));
+  let allCorrect=true;
+  for(const s of PUZZLE.suspects){
+    const sol=PUZZLE.solution[s.id];
+    const solKey=cellKey(sol[0],sol[1]);
+    const placedKey=Object.entries(state.placements).find(([k,v])=>v===s.id);
+    if(placedKey&&placedKey[0]===solKey){document.getElementById(`cell-${solKey}`).classList.add('correct')}
+    else{if(placedKey)document.getElementById(`cell-${placedKey[0]}`).classList.add('error');allCorrect=false}
   }
-  
-  if (allCorrect) {
-    state.solved = true;
-    const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
-    const mins = Math.floor(elapsed / 60);
-    const secs = elapsed % 60;
-    
-    document.getElementById('murderer-text').textContent = `兇手是：${PUZZLE.murdererName}！`;
-    document.getElementById('result-time').textContent = `破案時間：${mins}分${secs}秒`;
-    
-    setTimeout(() => {
-      document.getElementById('overlay').classList.add('show');
-    }, 500);
-    
+  if(allCorrect){
+    state.solved=true;
+    const elapsed=Math.floor((Date.now()-state.startTime)/1000);
+    document.getElementById('murderer-text').textContent=`兇手是：${PUZZLE.murdererName}！`;
+    document.getElementById('story-text').textContent=PUZZLE.story;
+    document.getElementById('result-time').textContent=`破案時間：${Math.floor(elapsed/60)}分${elapsed%60}秒`;
+    setTimeout(()=>document.getElementById('overlay').classList.add('show'),600);
     localStorage.removeItem('murdoku_save');
+  } else {
+    const toast=document.getElementById('error-toast');
+    toast.style.display='block';
+    setTimeout(()=>toast.style.display='none',3000);
   }
 }
 
-function confirmExit() {
-  if (confirm('確定要退出嗎？進度已自動儲存。')) {
-    window.close();
-  }
-}
+function showHelp(){alert("【玩法】\n1. 點選左側嫌疑人\n2. 點格子 = 筆記（再點取消）\n3. 長按格子 = 放置\n4. ✖按鈕 = 標記排除模式\n5. 全部放完後按提交\n\n【規則】\n• 每行只能放一人\n• 每列只能放一人\n• 找出與管家獨處同區域的兇手")}
+function confirmExit(){if(confirm('進度已自動儲存。確定退出？'))history.back()}
+function resetGame(){localStorage.removeItem('murdoku_save');state={selected:null,xMode:false,placements:{},notes:{},xMarks:{},history:[],startTime:Date.now(),solved:false};document.getElementById('overlay').classList.remove('show');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('error','correct'));render()}
 
 // === TIMER ===
-function startTimer() {
-  setInterval(() => {
-    if (state.solved) return;
-    const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
-    const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
-    const secs = String(elapsed % 60).padStart(2, '0');
-    document.getElementById('timer').textContent = `${mins}:${secs}`;
-  }, 1000);
-}
+setInterval(()=>{if(state.solved)return;const e=Math.floor((Date.now()-state.startTime)/1000);document.getElementById('timer').textContent=`${String(Math.floor(e/60)).padStart(2,'0')}:${String(e%60).padStart(2,'0')}`},1000);
 
 // === SAVE/LOAD ===
-function saveState() {
-  const save = {
-    placements: state.placements,
-    notes: state.notes,
-    xMarks: state.xMarks,
-    startTime: state.startTime,
-    solved: state.solved,
-  };
-  localStorage.setItem('murdoku_save', JSON.stringify(save));
-}
+function saveState(){localStorage.setItem('murdoku_save',JSON.stringify({placements:state.placements,notes:state.notes,xMarks:state.xMarks,startTime:state.startTime,solved:state.solved}))}
+function loadState(){const raw=localStorage.getItem('murdoku_save');if(raw){try{const s=JSON.parse(raw);Object.assign(state,{placements:s.placements||{},notes:s.notes||{},xMarks:s.xMarks||{},startTime:s.startTime||Date.now(),solved:s.solved||false})}catch(e){}}}
 
-function loadState() {
-  const raw = localStorage.getItem('murdoku_save');
-  if (raw) {
-    try {
-      const save = JSON.parse(raw);
-      state.placements = save.placements || {};
-      state.notes = save.notes || {};
-      state.xMarks = save.xMarks || {};
-      state.startTime = save.startTime || Date.now();
-      state.solved = save.solved || false;
-    } catch(e) {}
-  }
-}
-
-function resetGame() {
-  localStorage.removeItem('murdoku_save');
-  state = { selectedSuspect: null, xMode: false, placements: {}, notes: {}, xMarks: {}, history: [], startTime: Date.now(), solved: false };
-  document.getElementById('overlay').classList.remove('show');
-  document.querySelectorAll('.cell').forEach(c => c.classList.remove('error', 'correct'));
-  init();
-}
-
-// === START ===
-init();
+// === INIT ===
+loadState();render();
 </script>
 </body>
 </html>
