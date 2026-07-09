@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Murdoku 推理謎盤 - 珠寶失竊案</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Noto Sans TC', sans-serif; background: #1A1A2E; color: #EAEAEA; min-height: 100vh; }
+
+/* Layout */
+.game-container { display: grid; grid-template-columns: 30% 1fr 15%; height: 100vh; gap: 0; }
+
+/* Left Panel */
+.left-panel { background: #16213E; padding: 16px; overflow-y: auto; border-right: 1px solid #2a2a4e; }
+.logo { font-size: 20px; font-weight: 700; color: #E94560; margin-bottom: 8px; }
+.timer { font-size: 24px; font-weight: 600; color: #FFC107; margin-bottom: 12px; font-variant-numeric: tabular-nums; }
+.puzzle-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #53A8B6; }
+.general-clue { background: #0F3460; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 13px; color: #9E9E9E; line-height: 1.5; }
+
+/* Suspects */
+.suspects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+.suspect-card { background: #0F3460; border: 2px solid transparent; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.2s; user-select: none; }
+.suspect-card:hover { border-color: #53A8B6; }
+.suspect-card.selected { border-color: #FFC107; background: #1a2a4e; box-shadow: 0 0 10px rgba(255,193,7,0.3); }
+.suspect-card.placed { opacity: 0.4; }
+.suspect-card .avatar { width: 40px; height: 40px; border-radius: 50%; background: #53A8B6; display: flex; align-items: center; justify-content: center; margin: 0 auto 6px; font-size: 18px; font-weight: 700; }
+.suspect-card .name { font-size: 13px; font-weight: 600; }
+.suspect-card .id { font-size: 11px; color: #9E9E9E; }
+
+/* Clues */
+.clues-section { margin-top: 12px; }
+.clues-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #FFC107; }
+.clue-item { font-size: 13px; padding: 6px 8px; margin-bottom: 4px; border-radius: 4px; background: #0F3460; line-height: 1.4; transition: background 0.2s; }
+.clue-item.highlighted { background: #2a1a0e; border-left: 3px solid #FFC107; }
+
+/* Center - Board */
+.center-panel { display: flex; align-items: center; justify-content: center; padding: 24px; background: #1A1A2E; }
+.board { display: grid; gap: 4px; }
+.cell { background: #0F3460; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: all 0.2s; border: 2px solid #2a2a4e; min-width: 120px; min-height: 120px; user-select: none; }
+.cell:hover { border-color: #53A8B6; }
+.cell .room-name { font-size: 11px; color: #9E9E9E; position: absolute; top: 4px; left: 6px; }
+.cell .room-objects { font-size: 10px; color: #555; position: absolute; bottom: 4px; left: 6px; }
+.cell .placed-suspect { font-size: 28px; font-weight: 700; color: #4CAF50; }
+.cell .placed-name { font-size: 11px; color: #4CAF50; }
+.cell .notes { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; }
+.cell .note { font-size: 10px; background: #1a2a4e; color: #FFC107; padding: 1px 4px; border-radius: 3px; }
+.cell .x-mark { position: absolute; font-size: 48px; color: rgba(233,69,96,0.5); font-weight: 700; pointer-events: none; }
+.cell.error { border-color: #E94560; background: #2a1020; }
+.cell.correct { border-color: #4CAF50; }
+
+/* Right Panel */
+.right-panel { background: #16213E; padding: 12px; display: flex; flex-direction: column; gap: 10px; border-left: 1px solid #2a2a4e; }
+.tool-btn { background: #0F3460; border: 1px solid #2a2a4e; border-radius: 6px; padding: 10px; text-align: center; cursor: pointer; font-size: 12px; color: #EAEAEA; transition: all 0.2s; user-select: none; }
+.tool-btn:hover { border-color: #53A8B6; }
+.tool-btn.active { border-color: #FFC107; background: #2a1a0e; color: #FFC107; }
+.tool-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Submit */
+.submit-btn { margin-top: auto; background: #E94560; color: #fff; border: none; border-radius: 6px; padding: 14px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.submit-btn:hover:not(.disabled) { transform: scale(1.02); box-shadow: 0 4px 12px rgba(233,69,96,0.4); }
+.submit-btn.disabled { background: #444; cursor: not-allowed; color: #999; }
+
+/* Success overlay */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; flex-direction: column; }
+.overlay.show { display: flex; }
+.overlay h1 { font-size: 48px; margin-bottom: 16px; }
+.overlay .murderer-reveal { font-size: 24px; color: #E94560; margin-bottom: 12px; }
+.overlay .time-display { font-size: 18px; color: #9E9E9E; margin-bottom: 24px; }
+.overlay button { background: #53A8B6; color: #fff; border: none; border-radius: 6px; padding: 12px 24px; font-size: 16px; cursor: pointer; }
+
+/* Long press indicator */
+.cell.pressing { animation: pulse 0.5s ease; }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(0.95); } 100% { transform: scale(1); } }
+</style>
+</head>
+<body>
+<div class="game-container">
+  <!-- Left Panel -->
+  <div class="left-panel">
+    <div class="logo">🔍 Murdoku 推理謎盤</div>
+    <div class="timer" id="timer">00:00</div>
+    <div class="puzzle-title">珠寶失竊案（困難）</div>
+    <div class="general-clue">
+      📋 通用規則：5 位嫌疑人分別在 5 個不同房間。每人恰好在一個房間中。透過線索推理找出每人位置！
+    </div>
+    
+    <div class="suspects-grid" id="suspects"></div>
+    
+    <div class="clues-section">
+      <div class="clues-title">📌 線索清單</div>
+      <div id="clues"></div>
+    </div>
+  </div>
+  
+  <!-- Center Panel -->
+  <div class="center-panel">
+    <div class="board" id="board" style="grid-template-columns: repeat(5, 1fr);"></div>
+  </div>
+  
+  <!-- Right Panel -->
+  <div class="right-panel">
+    <div class="tool-btn" id="btn-close" onclick="confirmExit()">✕ 退出</div>
+    <div class="tool-btn" id="btn-clear" onmousedown="startClear()" onmouseup="endClear()" ontouchstart="startClear()" ontouchend="endClear()">🗑 清除全部<br><span style="font-size:10px;color:#9E9E9E">（長按）</span></div>
+    <div class="tool-btn" id="btn-undo" onclick="undo()">↩ 撤銷</div>
+    <div class="tool-btn" id="btn-x" onclick="toggleXMode()">✖ 標記排除</div>
+    <button class="submit-btn disabled" id="btn-submit" onclick="submitAnswer()">提交<br><span style="font-size:11px">（請先放置所有人）</span></button>
+  </div>
+</div>
+
+<!-- Success Overlay -->
+<div class="overlay" id="overlay">
+  <h1>🎉 破案成功！</h1>
+  <div class="murderer-reveal" id="murderer-text"></div>
+  <div class="time-display" id="result-time"></div>
+  <button onclick="resetGame()">重新開始</button>
+</div>
+
+<script>
+// === PUZZLE DATA ===
+const PUZZLE = {
+  title: "珠寶失竊案",
+  difficulty: "困難",
+  gridSize: 5,
+  rooms: [
+    { id: "R1", name: "客廳", objects: "沙發、花瓶" },
+    { id: "R2", name: "書房", objects: "書架、檯燈" },
+    { id: "R3", name: "廚房", objects: "刀架、冰箱" },
+    { id: "R4", name: "走廊", objects: "衣帽架、鏡子" },
+    { id: "R5", name: "花園", objects: "噴泉、長椅" },
+  ],
+  suspects: [
+    { id: "S1", name: "陳先生", desc: "商人，穿西裝", avatar: "陳" },
+    { id: "S2", name: "李小姐", desc: "畫家，戴貝雷帽", avatar: "李" },
+    { id: "S3", name: "王教授", desc: "大學教授，戴眼鏡", avatar: "王" },
+    { id: "S4", name: "張女士", desc: "主人妹妹，穿紅洋裝", avatar: "張" },
+    { id: "S5", name: "林管家", desc: "管家，穿燕尾服", avatar: "林" },
+  ],
+  clues: [
+    { id: 1, text: "林管家在走廊（R4）", relatedSuspects: ["S5"] },
+    { id: 2, text: "陳先生不在客廳", relatedSuspects: ["S1"] },
+    { id: 3, text: "李小姐不在花園", relatedSuspects: ["S2"] },
+    { id: 4, text: "王教授的房間編號和張女士的房間編號相鄰（差1）", relatedSuspects: ["S3", "S4"] },
+    { id: 5, text: "陳先生的房間編號比李小姐大", relatedSuspects: ["S1", "S2"] },
+    { id: 6, text: "王教授不在書房", relatedSuspects: ["S3"] },
+    { id: 7, text: "張女士和林管家的房間編號差2", relatedSuspects: ["S4", "S5"] },
+    { id: 8, text: "張女士不在客廳", relatedSuspects: ["S4"] },
+    { id: 9, text: "李小姐的房間編號比王教授大", relatedSuspects: ["S2", "S3"] },
+  ],
+  solution: { R1: "S3", R2: "S4", R3: "S2", R4: "S5", R5: "S1" },
+  murderer: "S4",
+  murdererName: "張女士",
+  story: "張女士在書房獨自面對珠寶展示櫃，趁無人注意偷走了珠寶！"
+};
+
+// === GAME STATE ===
+let state = {
+  selectedSuspect: null,
+  xMode: false,
+  placements: {},      // { R1: "S3", ... }
+  notes: {},           // { R1: ["S1","S3"], ... }
+  xMarks: {},          // { R1: true, ... }
+  history: [],         // undo stack
+  startTime: Date.now(),
+  solved: false,
+};
+
+// === INIT ===
+function init() {
+  loadState();
+  renderSuspects();
+  renderClues();
+  renderBoard();
+  updateSubmitButton();
+  startTimer();
+}
+
+// === RENDER ===
+function renderSuspects() {
+  const container = document.getElementById('suspects');
+  container.innerHTML = PUZZLE.suspects.map(s => {
+    const placed = Object.values(state.placements).includes(s.id);
+    const selected = state.selectedSuspect === s.id;
+    return `<div class="suspect-card ${selected ? 'selected' : ''} ${placed ? 'placed' : ''}" 
+                 onclick="selectSuspect('${s.id}')">
+      <div class="avatar">${s.avatar}</div>
+      <div class="name">${s.name}</div>
+      <div class="id">${s.id}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderClues() {
+  const container = document.getElementById('clues');
+  container.innerHTML = PUZZLE.clues.map(c => {
+    const highlighted = state.selectedSuspect && c.relatedSuspects.includes(state.selectedSuspect);
+    return `<div class="clue-item ${highlighted ? 'highlighted' : ''}">${c.id}. ${c.text}</div>`;
+  }).join('');
+}
+
+function renderBoard() {
+  const container = document.getElementById('board');
+  container.innerHTML = PUZZLE.rooms.map(room => {
+    const placed = state.placements[room.id];
+    const notes = state.notes[room.id] || [];
+    const hasX = state.xMarks[room.id];
+    const suspect = placed ? PUZZLE.suspects.find(s => s.id === placed) : null;
+    
+    return `<div class="cell" id="cell-${room.id}" 
+                 onclick="cellClick('${room.id}')" 
+                 onmousedown="cellMouseDown('${room.id}')" 
+                 onmouseup="cellMouseUp('${room.id}')"
+                 ontouchstart="cellMouseDown('${room.id}')"
+                 ontouchend="cellMouseUp('${room.id}')">
+      <div class="room-name">${room.name}</div>
+      <div class="room-objects">${room.objects}</div>
+      ${hasX ? '<div class="x-mark">✕</div>' : ''}
+      ${suspect ? `<div class="placed-suspect">${suspect.avatar}</div><div class="placed-name">${suspect.name}</div>` : ''}
+      ${!suspect && notes.length > 0 ? `<div class="notes">${notes.map(n => {
+        const s = PUZZLE.suspects.find(x => x.id === n);
+        return `<span class="note">${s.avatar}</span>`;
+      }).join('')}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// === INTERACTIONS ===
+function selectSuspect(id) {
+  if (state.solved) return;
+  if (state.xMode) { state.xMode = false; document.getElementById('btn-x').classList.remove('active'); }
+  state.selectedSuspect = state.selectedSuspect === id ? null : id;
+  renderSuspects();
+  renderClues();
+}
+
+function toggleXMode() {
+  if (state.solved) return;
+  state.xMode = !state.xMode;
+  if (state.xMode) { state.selectedSuspect = null; renderSuspects(); renderClues(); }
+  document.getElementById('btn-x').classList.toggle('active', state.xMode);
+}
+
+let pressTimer = null;
+let pressedRoom = null;
+
+function cellMouseDown(roomId) {
+  if (state.solved) return;
+  pressedRoom = roomId;
+  pressTimer = setTimeout(() => {
+    placeSuspect(roomId);
+    pressTimer = null;
+  }, 500);
+}
+
+function cellMouseUp(roomId) {
+  if (pressTimer) {
+    clearTimeout(pressTimer);
+    pressTimer = null;
+    // Short click
+    cellClick(roomId);
+  }
+}
+
+function cellClick(roomId) {
+  if (state.solved) return;
+  
+  if (state.xMode) {
+    pushHistory();
+    if (state.xMarks[roomId]) {
+      delete state.xMarks[roomId];
+    } else {
+      state.xMarks[roomId] = true;
+      state.notes[roomId] = []; // Clear notes when marking X
+    }
+    renderBoard();
+    saveState();
+    return;
+  }
+  
+  if (!state.selectedSuspect) return;
+  if (state.placements[roomId]) return; // Already has someone placed
+  
+  // Toggle note
+  pushHistory();
+  if (!state.notes[roomId]) state.notes[roomId] = [];
+  const idx = state.notes[roomId].indexOf(state.selectedSuspect);
+  if (idx >= 0) {
+    state.notes[roomId].splice(idx, 1);
+  } else {
+    state.notes[roomId].push(state.selectedSuspect);
+  }
+  renderBoard();
+  saveState();
+}
+
+function placeSuspect(roomId) {
+  if (state.solved) return;
+  if (!state.selectedSuspect) return;
+  
+  pushHistory();
+  
+  // Remove from previous position if placed elsewhere
+  for (const [key, val] of Object.entries(state.placements)) {
+    if (val === state.selectedSuspect) delete state.placements[key];
+  }
+  
+  // Place
+  state.placements[roomId] = state.selectedSuspect;
+  state.notes[roomId] = []; // Clear notes
+  delete state.xMarks[roomId]; // Clear X
+  
+  renderBoard();
+  renderSuspects();
+  updateSubmitButton();
+  saveState();
+}
+
+// === TOOLS ===
+function undo() {
+  if (state.solved || state.history.length === 0) return;
+  const prev = state.history.pop();
+  state.placements = prev.placements;
+  state.notes = prev.notes;
+  state.xMarks = prev.xMarks;
+  renderBoard();
+  renderSuspects();
+  updateSubmitButton();
+  saveState();
+}
+
+let clearTimer = null;
+function startClear() {
+  clearTimer = setTimeout(() => {
+    if (state.solved) return;
+    pushHistory();
+    state.placements = {};
+    state.notes = {};
+    state.xMarks = {};
+    renderBoard();
+    renderSuspects();
+    updateSubmitButton();
+    saveState();
+  }, 1000);
+}
+function endClear() { if (clearTimer) { clearTimeout(clearTimer); clearTimer = null; } }
+
+function pushHistory() {
+  state.history.push({
+    placements: { ...state.placements },
+    notes: JSON.parse(JSON.stringify(state.notes)),
+    xMarks: { ...state.xMarks },
+  });
+  if (state.history.length > 50) state.history.shift();
+}
+
+// === SUBMIT ===
+function updateSubmitButton() {
+  const btn = document.getElementById('btn-submit');
+  const allPlaced = Object.keys(state.placements).length === PUZZLE.gridSize;
+  btn.classList.toggle('disabled', !allPlaced);
+  btn.innerHTML = allPlaced ? '提交答案' : '提交<br><span style="font-size:11px">（請先放置所有人）</span>';
+}
+
+function submitAnswer() {
+  const btn = document.getElementById('btn-submit');
+  if (btn.classList.contains('disabled')) return;
+  
+  // Check answer
+  let allCorrect = true;
+  for (const room of PUZZLE.rooms) {
+    const cell = document.getElementById(`cell-${room.id}`);
+    cell.classList.remove('error', 'correct');
+    if (state.placements[room.id] === PUZZLE.solution[room.id]) {
+      cell.classList.add('correct');
+    } else {
+      cell.classList.add('error');
+      allCorrect = false;
+    }
+  }
+  
+  if (allCorrect) {
+    state.solved = true;
+    const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+    const mins = Math.floor(elapsed / 60);
+    const secs = elapsed % 60;
+    
+    document.getElementById('murderer-text').textContent = `兇手是：${PUZZLE.murdererName}！`;
+    document.getElementById('result-time').textContent = `破案時間：${mins}分${secs}秒`;
+    
+    setTimeout(() => {
+      document.getElementById('overlay').classList.add('show');
+    }, 500);
+    
+    localStorage.removeItem('murdoku_save');
+  }
+}
+
+function confirmExit() {
+  if (confirm('確定要退出嗎？進度已自動儲存。')) {
+    window.close();
+  }
+}
+
+// === TIMER ===
+function startTimer() {
+  setInterval(() => {
+    if (state.solved) return;
+    const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+    const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+    const secs = String(elapsed % 60).padStart(2, '0');
+    document.getElementById('timer').textContent = `${mins}:${secs}`;
+  }, 1000);
+}
+
+// === SAVE/LOAD ===
+function saveState() {
+  const save = {
+    placements: state.placements,
+    notes: state.notes,
+    xMarks: state.xMarks,
+    startTime: state.startTime,
+    solved: state.solved,
+  };
+  localStorage.setItem('murdoku_save', JSON.stringify(save));
+}
+
+function loadState() {
+  const raw = localStorage.getItem('murdoku_save');
+  if (raw) {
+    try {
+      const save = JSON.parse(raw);
+      state.placements = save.placements || {};
+      state.notes = save.notes || {};
+      state.xMarks = save.xMarks || {};
+      state.startTime = save.startTime || Date.now();
+      state.solved = save.solved || false;
+    } catch(e) {}
+  }
+}
+
+function resetGame() {
+  localStorage.removeItem('murdoku_save');
+  state = { selectedSuspect: null, xMode: false, placements: {}, notes: {}, xMarks: {}, history: [], startTime: Date.now(), solved: false };
+  document.getElementById('overlay').classList.remove('show');
+  document.querySelectorAll('.cell').forEach(c => c.classList.remove('error', 'correct'));
+  init();
+}
+
+// === START ===
+init();
+</script>
+</body>
+</html>
