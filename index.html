@@ -8,7 +8,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;height:100vh;overflow:hidden}
-.game-container{display:grid;grid-template-columns:280px 1fr 160px;height:100vh}
+.game-container{display:grid;grid-template-columns:280px 1fr 180px;height:100vh}
 .left-panel{background:#16213E;padding:14px;overflow-y:auto;border-right:1px solid #2a2a4e}
 .logo{font-size:18px;font-weight:700;color:#E94560;margin-bottom:4px}
 .timer{font-size:22px;font-weight:600;color:#FFC107;margin-bottom:8px;font-variant-numeric:tabular-nums}
@@ -25,8 +25,11 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .suspect-row .name{font-size:12px;font-weight:600;margin-bottom:3px}
 .suspect-row .clue{font-size:11px;color:#9E9E9E;line-height:1.3}
 .suspect-row.selected .clue{color:#FFC107}
-.center-panel{display:flex;align-items:center;justify-content:center;padding:16px;background:#1A1A2E}
-.board{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:3px solid #444}
+.keyword{border-bottom:1px dashed #FFC107;cursor:help;position:relative}
+.keyword:hover .kw-tooltip{display:block}
+.kw-tooltip{display:none;position:absolute;bottom:100%;left:0;background:#1a1a2e;border:1px solid #FFC107;border-radius:6px;padding:6px 10px;font-size:11px;color:#FFC107;white-space:nowrap;z-index:10;pointer-events:none}
+.center-panel{display:flex;align-items:center;justify-content:center;padding:16px;background:#1A1A2E;position:relative}
+.board{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:3px solid #666}
 .cell{width:95px;height:95px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .15s;border:1px solid #333;user-select:none}
 .cell:hover{filter:brightness(1.2)}
 .cell.region-客廳{background:#1a3a5a}
@@ -35,24 +38,25 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .cell.region-廚房{background:#3a2a1a}
 .cell.blocked{background:#111!important;cursor:not-allowed;opacity:.5}
 .cell .decoration{position:absolute;font-size:20px;opacity:.5;top:4px;right:4px}
-.cell .room-label{position:absolute;bottom:2px;left:4px;font-size:9px;color:rgba(255,255,255,.3)}
+.cell .region-tag{position:absolute;bottom:2px;left:4px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);text-shadow:0 0 4px rgba(0,0,0,.8)}
 .cell .placed-suspect{font-size:28px;font-weight:700}
 .cell .placed-name{font-size:11px;margin-top:2px}
 .cell .notes{display:flex;flex-wrap:wrap;gap:2px;justify-content:center}
-.cell .note{font-size:10px;background:rgba(255,193,7,.2);color:#FFC107;padding:1px 4px;border-radius:2px}
+.cell .note{font-size:15px;font-weight:600;background:rgba(255,193,7,.15);color:#FFC107;padding:1px 4px;border-radius:3px}
 .cell .x-mark{position:absolute;font-size:42px;color:rgba(233,69,96,.4);font-weight:700;pointer-events:none}
+.cell .auto-x{position:absolute;font-size:30px;color:rgba(100,100,100,.5);font-weight:700;pointer-events:none}
 .cell.error{box-shadow:inset 0 0 0 3px #E94560}
 .cell.correct{box-shadow:inset 0 0 0 3px #4CAF50}
-.cell.row-conflict,.cell.col-conflict{box-shadow:inset 0 0 0 2px #ff6b6b}
+.cell.row-conflict{box-shadow:inset 0 0 0 2px #ff6b6b}
 .cell.border-top{border-top:3px solid #888}
 .cell.border-bottom{border-bottom:3px solid #888}
 .cell.border-left{border-left:3px solid #888}
 .cell.border-right{border-right:3px solid #888}
-.right-panel{background:#16213E;padding:10px;display:flex;flex-direction:column;gap:8px;border-left:1px solid #2a2a4e}
-.tool-btn{background:#0F3460;border:1px solid #2a2a4e;border-radius:6px;padding:8px;text-align:center;cursor:pointer;font-size:11px;color:#EAEAEA;transition:all .2s;user-select:none}
+.right-panel{background:#16213E;padding:10px;display:flex;flex-direction:column;gap:10px;border-left:1px solid #2a2a4e}
+.tool-btn{background:#0F3460;border:1px solid #2a2a4e;border-radius:6px;padding:10px;text-align:center;cursor:pointer;font-size:16px;color:#EAEAEA;transition:all .2s;user-select:none}
 .tool-btn:hover{border-color:#53A8B6}
 .tool-btn.active{border-color:#FFC107;background:#2a1a0e;color:#FFC107}
-.submit-btn{margin-top:auto;background:#E94560;color:#fff;border:none;border-radius:6px;padding:12px 8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.submit-btn{margin-top:auto;background:#E94560;color:#fff;border:none;border-radius:6px;padding:14px 8px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s}
 .submit-btn.disabled{background:#333;cursor:not-allowed;color:#666}
 .submit-btn:hover:not(.disabled){box-shadow:0 4px 12px rgba(233,69,96,.4)}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:100;align-items:center;justify-content:center;flex-direction:column;text-align:center}
@@ -71,14 +75,14 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
     <div class="logo">🔍 Murdoku 推理謎盤</div>
     <div class="timer" id="timer">00:00</div>
     <div class="puzzle-title">珠寶失竊案（困難 6×6）</div>
-    <div class="general-clue">📋 每行每列只能放一人。找出所有人的位置，揪出與 Victor 獨處在同一區域的兇手！<br><small>操作：點選人物→點格筆記 / 長按格放置</small></div>
+    <div class="general-clue">📋 每<span class="keyword">行<span class="kw-tooltip">一橫排格子</span></span>每<span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>只能放一人。找出所有人的位置，揪出與 Victor 獨處在同一區域的兇手！<br><small>操作：點選人物→點格筆記 / 長按格放置</small></div>
     <div class="section-title">嫌疑人與線索</div>
     <div class="suspects-list" id="suspects"></div>
   </div>
   <div class="center-panel"><div class="board" id="board"></div></div>
   <div class="right-panel">
-    <div class="tool-btn" onclick="confirmExit()">✕ 退出</div>
-    <div class="tool-btn" onmousedown="startClear()" onmouseup="endClear()" ontouchstart="startClear()" ontouchend="endClear()">🗑 清除全部<br><small style="color:#9E9E9E">（長按）</small></div>
+    <div class="tool-btn" onclick="confirmExit()">← 退出</div>
+    <div class="tool-btn" onmousedown="startClear()" onmouseup="endClear()" ontouchstart="startClear()" ontouchend="endClear()">🗑 清除全部<br><small style="color:#9E9E9E;font-size:12px">（長按）</small></div>
     <div class="tool-btn" onclick="undo()">↩ 撤銷</div>
     <div class="tool-btn" id="btn-x" onclick="toggleXMode()">✖ 標記排除</div>
     <div class="tool-btn" onclick="showHelp()">❓ 玩法</div>
@@ -95,45 +99,54 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 <div class="error-toast" id="error-toast">有放置錯誤，請檢查紅色標記的格子</div>
 
 <script>
-const PUZZLE = {
-  gridSize: 6,
-  regions: {
-    '客廳':{cells:[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]]},
-    '書房':{cells:[[0,3],[0,4],[0,5],[1,3],[1,4],[1,5]]},
-    '花園':{cells:[[2,0],[2,1],[2,2],[3,0],[3,1],[3,2],[4,0],[4,2],[5,0],[5,1],[5,2]]},
-    '廚房':{cells:[[2,3],[2,4],[2,5],[3,3],[3,4],[3,5],[4,3],[4,4],[4,5],[5,3],[5,4]]}
-  },
-  decorations: [{r:1,c:2,icon:"🏺",name:"花瓶"},{r:3,c:4,icon:"🧊",name:"冰箱"}],
-  blocked: [{r:4,c:1,icon:"🗿"},{r:5,c:5,icon:"🧱"}],
-  suspects: [
-    {id:"A",name:"Adam",color:"#e74c3c",clue:"Adam 在第 2 列"},
-    {id:"B",name:"Beth",color:"#3498db",clue:"Beth 在第 5 列"},
-    {id:"C",name:"Carl",color:"#2ecc71",clue:"Carl 跟花瓶相鄰"},
-    {id:"D",name:"Diana",color:"#9b59b6",clue:"Diana 在花園"},
-    {id:"E",name:"Eric",color:"#f39c12",clue:"Eric 不在客廳"},
-    {id:"V",name:"Victor",color:"#e67e22",clue:"Victor 在第 6 行（被害者）"}
+const PUZZLE={
+  gridSize:6,
+  regions:{'客廳':{cells:[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]]},'書房':{cells:[[0,3],[0,4],[0,5],[1,3],[1,4],[1,5]]},'花園':{cells:[[2,0],[2,1],[2,2],[3,0],[3,1],[3,2],[4,0],[4,2],[5,0],[5,1],[5,2]]},'廚房':{cells:[[2,3],[2,4],[2,5],[3,3],[3,4],[3,5],[4,3],[4,4],[4,5],[5,3],[5,4]]}},
+  // Region label positions: one cell per region to show the name
+  regionLabels:{客廳:[0,0],書房:[0,5],花園:[5,0],廚房:[5,4]},
+  decorations:[{r:1,c:2,icon:"🏺",name:"花瓶"},{r:3,c:4,icon:"🧊",name:"冰箱"}],
+  blocked:[{r:4,c:1,icon:"🗿"},{r:5,c:5,icon:"🧱"}],
+  suspects:[
+    {id:"A",name:"Adam",color:"#e74c3c",clue:'Adam 在第 2 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
+    {id:"B",name:"Beth",color:"#3498db",clue:'Beth 在第 5 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
+    {id:"C",name:"Carl",color:"#2ecc71",clue:'Carl 跟花瓶<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，同一區域內</span></span>'},
+    {id:"D",name:"Diana",color:"#9b59b6",clue:'Diana 在花園'},
+    {id:"E",name:"Eric",color:"#f39c12",clue:'Eric 不在客廳'},
+    {id:"V",name:"Victor",color:"#e67e22",clue:'Victor 在第 6 <span class="keyword">行<span class="kw-tooltip">一橫排格子</span></span>（被害者）'}
   ],
-  // Solution: [row, col] (0-indexed)
-  solution: {A:[0,1],B:[1,4],C:[2,2],D:[3,0],E:[4,5],V:[5,3]},
-  murderer:"E",
-  murdererName:"Eric",
+  solution:{A:[0,1],B:[1,4],C:[2,2],D:[3,0],E:[4,5],V:[5,3]},
+  murderer:"E",murdererName:"Eric",
   story:"Eric 在廚房與 Victor 獨處，趁機痛下殺手並偷走了珠寶！"
 };
+const TOTAL=6;
 
-let state={selected:null,xMode:false,placements:{},notes:{},xMarks:{},history:[],startTime:Date.now(),solved:false};
-const TOTAL=6; // 5 suspects + V
+let state={selected:null,xMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],startTime:Date.now(),solved:false};
 
-function cellKey(r,c){return`${r},${c}`}
+function ck(r,c){return`${r},${c}`}
 function getRegion(r,c){for(const[n,reg] of Object.entries(PUZZLE.regions)){if(reg.cells.some(([rr,cc])=>rr===r&&cc===c))return n}return null}
 function isBlocked(r,c){return PUZZLE.blocked.some(b=>b.r===r&&b.c===c)}
 function getDecoration(r,c){return PUZZLE.decorations.find(d=>d.r===r&&d.c===c)}
 function regionBorders(r,c){const reg=getRegion(r,c);let cls=[];if(r>0&&getRegion(r-1,c)!==reg)cls.push('border-top');if(r<5&&getRegion(r+1,c)!==reg)cls.push('border-bottom');if(c>0&&getRegion(r,c-1)!==reg)cls.push('border-left');if(c<5&&getRegion(r,c+1)!==reg)cls.push('border-right');return cls.join(' ')}
+function isRegionLabel(r,c){for(const[n,pos] of Object.entries(PUZZLE.regionLabels)){if(pos[0]===r&&pos[1]===c)return n}return null}
 
-// Row/col conflict detection (warning, not blocking)
+// Auto-X: mark row/col when someone is placed
+function computeAutoX(){
+  const ax={};
+  for(const[key,sid] of Object.entries(state.placements)){
+    const[r,c]=key.split(',').map(Number);
+    for(let i=0;i<6;i++){
+      const rk=ck(r,i),ck2=ck(i,c);
+      if(rk!==key&&!state.placements[rk])ax[rk]=true;
+      if(ck2!==key&&!state.placements[ck2])ax[ck2]=true;
+    }
+  }
+  state.autoX=ax;
+}
+
 function getConflicts(){
   const conflicts=new Set();
   const byRow={},byCol={};
-  for(const[key,sid] of Object.entries(state.placements)){
+  for(const[key] of Object.entries(state.placements)){
     const[r,c]=key.split(',').map(Number);
     if(!byRow[r])byRow[r]=[];byRow[r].push(key);
     if(!byCol[c])byCol[c]=[];byCol[c].push(key);
@@ -143,7 +156,7 @@ function getConflicts(){
   return conflicts;
 }
 
-function render(){renderSuspects();renderBoard();updateSubmit()}
+function render(){computeAutoX();renderSuspects();renderBoard();updateSubmit()}
 function renderSuspects(){
   document.getElementById('suspects').innerHTML=PUZZLE.suspects.map(s=>{
     const placed=Object.values(state.placements).includes(s.id);
@@ -155,22 +168,24 @@ function renderSuspects(){
 }
 function renderBoard(){
   const conflicts=getConflicts();
-  const board=document.getElementById('board');
-  let html='';
+  const board=document.getElementById('board');let html='';
   for(let r=0;r<6;r++){for(let c=0;c<6;c++){
-    const key=cellKey(r,c);const reg=getRegion(r,c);const blocked=isBlocked(r,c);
+    const key=ck(r,c);const reg=getRegion(r,c);const blocked=isBlocked(r,c);
     const deco=getDecoration(r,c);const placed=state.placements[key];
     const notes=state.notes[key]||[];const hasX=state.xMarks[key];
+    const hasAutoX=state.autoX[key]&&!placed;
     const borders=regionBorders(r,c);const suspect=placed?PUZZLE.suspects.find(s=>s.id===placed):null;
     const conflict=conflicts.has(key)?'row-conflict':'';
+    const regLabel=isRegionLabel(r,c);
     let content='';
+    if(regLabel)content+=`<div class="region-tag">${regLabel}</div>`;
     if(deco)content+=`<div class="decoration">${deco.icon}</div>`;
     if(blocked)content+=`<div style="font-size:28px;opacity:.6">${PUZZLE.blocked.find(b=>b.r===r&&b.c===c).icon}</div>`;
     if(hasX)content+=`<div class="x-mark">✕</div>`;
+    else if(hasAutoX&&!blocked)content+=`<div class="auto-x">·</div>`;
     if(suspect)content+=`<div class="placed-suspect" style="color:${suspect.color}">${suspect.id}</div><div class="placed-name" style="color:${suspect.color}">${suspect.name}</div>`;
     else if(!blocked&&notes.length>0)content+=`<div class="notes">${notes.map(n=>{const s=PUZZLE.suspects.find(x=>x.id===n);return`<span class="note" style="color:${s.color}">${s.id}</span>`}).join('')}</div>`;
-    html+=`<div class="cell region-${reg} ${blocked?'blocked':''} ${borders} ${conflict}" id="cell-${key}" onclick="cellClick(${r},${c})" onmousedown="cellDown(${r},${c})" onmouseup="cellUp()" ontouchstart="cellDown(${r},${c})" ontouchend="cellUp()">
-      <div class="room-label">${reg||''}</div>${content}</div>`;
+    html+=`<div class="cell region-${reg} ${blocked?'blocked':''} ${borders} ${conflict}" id="cell-${key}" onclick="cellClick(${r},${c})" onmousedown="cellDown(${r},${c})" onmouseup="cellUp()" ontouchstart="cellDown(${r},${c})" ontouchend="cellUp()">${content}</div>`;
   }}
   board.innerHTML=html;
 }
@@ -181,21 +196,17 @@ function toggleXMode(){if(state.solved)return;state.xMode=!state.xMode;if(state.
 let pressTimer=null;
 function cellDown(r,c){if(state.solved||isBlocked(r,c))return;pressTimer=setTimeout(()=>{placeSuspect(r,c);pressTimer=null},500)}
 function cellUp(){if(pressTimer){clearTimeout(pressTimer);pressTimer=null}}
-
 function cellClick(r,c){
-  if(state.solved||isBlocked(r,c))return;
-  const key=cellKey(r,c);
+  if(state.solved||isBlocked(r,c))return;const key=ck(r,c);
   if(state.xMode){pushHistory();if(state.xMarks[key])delete state.xMarks[key];else{state.xMarks[key]=true;state.notes[key]=[]}render();saveState();return}
-  if(!state.selected)return;
-  if(state.placements[key])return;
+  if(!state.selected)return;if(state.placements[key])return;
   pushHistory();if(!state.notes[key])state.notes[key]=[];
   const idx=state.notes[key].indexOf(state.selected);
   if(idx>=0)state.notes[key].splice(idx,1);else state.notes[key].push(state.selected);
   render();saveState();
 }
-
 function placeSuspect(r,c){
-  if(!state.selected)return;const key=cellKey(r,c);pushHistory();
+  if(!state.selected)return;const key=ck(r,c);pushHistory();
   for(const k of Object.keys(state.placements)){if(state.placements[k]===state.selected)delete state.placements[k]}
   state.placements[key]=state.selected;state.notes[key]=[];delete state.xMarks[key];
   render();saveState();
@@ -210,17 +221,16 @@ function pushHistory(){state.history.push({p:{...state.placements},n:JSON.parse(
 function updateSubmit(){
   const btn=document.getElementById('btn-submit');const count=Object.keys(state.placements).length;
   const ready=count>=TOTAL;btn.classList.toggle('disabled',!ready);
-  btn.innerHTML=ready?'🔍 提交答案':`提交<br><small>（已放 ${count}/${TOTAL} 人）</small>`;
+  btn.innerHTML=ready?'🔍 提交答案':`提交<br><small style="font-size:12px">（已放 ${count}/${TOTAL}）</small>`;
 }
-
 function submitAnswer(){
   if(document.getElementById('btn-submit').classList.contains('disabled'))return;
   document.querySelectorAll('.cell').forEach(c=>c.classList.remove('error','correct'));
   let allCorrect=true;
   for(const s of PUZZLE.suspects){
-    const sol=PUZZLE.solution[s.id];const solKey=cellKey(sol[0],sol[1]);
+    const sol=PUZZLE.solution[s.id];const solKey=ck(sol[0],sol[1]);
     const entry=Object.entries(state.placements).find(([k,v])=>v===s.id);
-    if(entry&&entry[0]===solKey){document.getElementById(`cell-${solKey}`).classList.add('correct')}
+    if(entry&&entry[0]===solKey)document.getElementById(`cell-${solKey}`).classList.add('correct');
     else{if(entry)document.getElementById(`cell-${entry[0]}`).classList.add('error');allCorrect=false}
   }
   if(allCorrect){
@@ -232,16 +242,13 @@ function submitAnswer(){
     localStorage.removeItem('murdoku_save');
   }else{const t=document.getElementById('error-toast');t.style.display='block';setTimeout(()=>t.style.display='none',3000)}
 }
-
-function showHelp(){alert("【玩法】\n1. 點選左側嫌疑人\n2. 點格子 = 筆記（再點取消）\n3. 長按格子 = 放置\n4. ✖按鈕 = 標記排除模式\n5. 全部放完後按提交\n\n【規則】\n• 每行每列只能放一人\n• 紅框 = 行列衝突警告\n• 找出與 Victor 獨處同區域的兇手")}
+function showHelp(){alert("【玩法】\n1. 點選左側嫌疑人\n2. 點格子 = 筆記（再點取消）\n3. 長按格子 = 放置\n4. ✖按鈕 = 標記排除模式\n5. 全部放完後按提交\n\n【規則】\n• 每行每列只能放一人\n• 灰點 = 已被佔的行/列\n• 紅框 = 行列衝突警告\n• 找出與 Victor 獨處同區域的兇手")}
 function confirmExit(){if(confirm('進度已自動儲存。確定退出？'))history.back()}
-function resetGame(){localStorage.removeItem('murdoku_save');state={selected:null,xMode:false,placements:{},notes:{},xMarks:{},history:[],startTime:Date.now(),solved:false};document.getElementById('overlay').classList.remove('show');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('error','correct','row-conflict','col-conflict'));render()}
+function resetGame(){localStorage.removeItem('murdoku_save');state={selected:null,xMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],startTime:Date.now(),solved:false};document.getElementById('overlay').classList.remove('show');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('error','correct','row-conflict'));render()}
 
 setInterval(()=>{if(state.solved)return;const e=Math.floor((Date.now()-state.startTime)/1000);document.getElementById('timer').textContent=`${String(Math.floor(e/60)).padStart(2,'0')}:${String(e%60).padStart(2,'0')}`},1000);
-
 function saveState(){localStorage.setItem('murdoku_save',JSON.stringify({p:state.placements,n:state.notes,x:state.xMarks,t:state.startTime,s:state.solved}))}
 function loadState(){const raw=localStorage.getItem('murdoku_save');if(raw){try{const d=JSON.parse(raw);state.placements=d.p||{};state.notes=d.n||{};state.xMarks=d.x||{};state.startTime=d.t||Date.now();state.solved=d.s||false}catch(e){}}}
-
 loadState();render();
 </script>
 </body>
