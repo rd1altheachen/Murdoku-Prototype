@@ -32,13 +32,14 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .board{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:3px solid #666}
 .cell{width:95px;height:95px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .15s;border:1px solid #333;user-select:none}
 .cell:hover{filter:brightness(1.2)}
-.cell.region-客廳{background:#1a3a5a}
-.cell.region-書房{background:#2a1a3a}
+.cell.region-客廳{background:url('assets/scene-apartment/terrain-wood-floor.png') center/cover}
+.cell.region-書房{background:url('assets/scene-apartment/terrain-carpet.png') center/cover}
 .cell.region-花園{background:#1a3a2a}
-.cell.region-廚房{background:#3a2a1a}
+.cell.region-廚房{background:url('assets/scene-apartment/terrain-tile.png') center/cover}
 .cell.blocked{cursor:not-allowed}
 .cell.blocked:hover{filter:none}
-.cell .decoration{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:76px;opacity:.3;z-index:1;pointer-events:auto;cursor:help}
+.cell .decoration{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1;pointer-events:auto;cursor:help;font-size:76px;opacity:.3}
+.cell .decoration img{width:80%;height:80%;object-fit:contain;opacity:0.7}
 .cell .decoration::after{content:attr(data-tip);display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #FFC107;border-radius:4px;padding:3px 8px;font-size:12px;color:#FFC107;white-space:nowrap;z-index:20;pointer-events:none}
 .cell .decoration:hover::after{display:block}
 .cell .region-tag{position:absolute;bottom:2px;left:4px;font-size:21px;font-weight:700;color:rgba(255,255,255,.5);text-shadow:0 0 4px rgba(0,0,0,.8)}
@@ -113,7 +114,7 @@ const PUZZLE={
   // Region label positions: one cell per region to show the name
   regionLabels:{客廳:[0,0],書房:[0,5],花園:[5,0],廚房:[5,4]},
   decorations:[],
-  blocked:[{r:4,c:1,icon:"🗿",name:"雕像"},{r:5,c:5,icon:"🧱",name:"壁爐"},{r:1,c:2,icon:"🏺",name:"花瓶"},{r:3,c:4,icon:"🧊",name:"冰箱"}],
+  blocked:[{r:4,c:1,icon:"🗿",name:"雕像"},{r:5,c:5,icon:"🧱",name:"壁爐",img:"assets/scene-apartment/item-fireplace.png"},{r:1,c:2,icon:"🏺",name:"花瓶",img:"assets/scene-apartment/item-vase.png"},{r:3,c:4,icon:"🧊",name:"冰箱",img:"assets/scene-apartment/item-fridge.png"}],
   suspects:[
     {id:"A",name:"Adam",color:"#E63946",img:"assets/avatars/suspect-male-01.png",clue:'Adam 在第 5 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
     {id:"B",name:"Beth",color:"#457B9D",img:"assets/avatars/suspect-female-01.png",clue:'Beth 跟花瓶<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>，且<span class="keyword">獨自<span class="kw-tooltip">該人所在的區域內沒有其他人</span></span>待著'},
@@ -188,7 +189,7 @@ function renderBoard(){
     let content='';
     if(regLabel)content+=`<div class="region-tag">${regLabel}</div>`;
     if(deco)content+=`<div class="decoration" data-tip="${deco.name}">${deco.icon}</div>`;
-    if(blocked){const b=PUZZLE.blocked.find(b=>b.r===r&&b.c===c);content+=`<div class="decoration" data-tip="${b.name||''}">${b.icon}</div>`}
+    if(blocked){const b=PUZZLE.blocked.find(b=>b.r===r&&b.c===c);content+=`<div class="decoration" data-tip="${b.name||''}">${b.img?`<img src="${b.img}">`:b.icon}</div>`}
     if(hasX)content+=`<div class="x-mark">✕</div>`;
     else if(hasAutoX&&!blocked)content+=`<div class="auto-x">✕</div>`;
     if(suspect)content+=`<img src="${suspect.img}" style="width:80%;height:80%;object-fit:cover;border-radius:4px;position:relative;z-index:2"><div style="position:absolute;bottom:2px;right:4px;font-size:16px;font-weight:700;color:${suspect.color};z-index:3">${suspect.id}</div>`;
