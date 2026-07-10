@@ -29,8 +29,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .keyword:hover .kw-tooltip{display:block}
 .kw-tooltip{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #FFC107;border-radius:6px;padding:6px 10px;font-size:13px;color:#FFC107;min-width:140px;max-width:220px;word-wrap:break-word;white-space:normal;z-index:10;pointer-events:none;text-align:center;margin-bottom:4px}
 .center-panel{display:flex;align-items:center;justify-content:center;padding:16px;background:#1A1A2E;position:relative}
-.board{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:3px solid #666}
-.cell{width:95px;height:95px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .15s;border:1px solid #333;user-select:none}
+.board{display:grid;gap:0;border:3px solid #666}
+.cell{display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .15s;border:1px solid #333;user-select:none}
 .cell:hover{filter:brightness(1.2)}
 .cell.region-客廳{background:url('assets/scene-apartment/terrain-wood-floor.png') center/cover}
 .cell.region-書房{background:url('assets/scene-apartment/terrain-wood-floor.png') center/cover}
@@ -148,10 +148,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 </div><!-- end game-page -->
 
 <script>
-const PUZZLE={
-  gridSize:6,
+// === PUZZLE DATA ===
+const PUZZLE_1={
+  id:"apartment-medium-1",gridSize:6,
   regions:{'客廳':{cells:[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]]},'書房':{cells:[[0,3],[0,4],[0,5],[1,3],[1,4],[1,5]]},'花園':{cells:[[2,0],[2,1],[2,2],[3,0],[3,1],[3,2],[4,0],[4,1],[4,2],[5,0],[5,1],[5,2]]},'廚房':{cells:[[2,3],[2,4],[2,5],[3,3],[3,4],[3,5],[4,3],[4,4],[4,5],[5,3],[5,4],[5,5]]}},
-  // Region label positions: one cell per region to show the name
   regionLabels:{客廳:[0,0],書房:[0,5],花園:[5,0],廚房:[5,4]},
   decorations:[],
   blocked:[{r:4,c:1,name:"雕像",img:"assets/scene-museum/item-statue.png"},{r:5,c:4,name:"壁爐",img:"assets/scene-apartment/item-fireplace.png",wide:true},{r:5,c:5,name:"壁爐",img:null},{r:1,c:2,name:"花瓶",img:"assets/scene-apartment/item-vase.png"},{r:3,c:4,name:"冰箱",img:"assets/scene-apartment/item-fridge.png"}],
@@ -168,7 +168,72 @@ const PUZZLE={
   story:"Eric 在花園與 Victor 獨處，趁夜色掩護犯下了罪行！",
   terrainOverrides:{"1,4":"assets/scene-apartment/terrain-carpet.png","1,5":"assets/scene-apartment/terrain-carpet.png","3,1":"assets/common/terrain-stone-path.png","5,1":"assets/common/terrain-stone-path.png"}
 };
-const TOTAL=6;
+
+function makeRegionCells(rs,re,cs,ce){const c=[];for(let r=rs;r<=re;r++)for(let col=cs;col<=ce;col++)c.push([r,col]);return c;}
+
+const PUZZLE_3={
+  id:"park-hard-3",gridSize:10,
+  regions:{'入口':{cells:makeRegionCells(0,2,0,3)},'廣場':{cells:makeRegionCells(0,2,4,9)},'美食':{cells:makeRegionCells(3,5,0,4)},'遊樂':{cells:makeRegionCells(3,5,5,9)},'休息':{cells:makeRegionCells(6,9,0,3)},'後台':{cells:makeRegionCells(6,9,4,9)}},
+  regionLabels:{入口:[0,0],廣場:[0,9],美食:[5,0],遊樂:[3,9],休息:[9,0],後台:[9,9]},
+  decorations:[],
+  blocked:[{r:2,c:1,name:"路障"},{r:5,c:2,name:"路障"},{r:5,c:6,name:"路障"},{r:5,c:7,name:"路障"},{r:8,c:5,name:"路障"},{r:9,c:2,name:"路障"},{r:1,c:2,name:"氣球攤"},{r:1,c:6,name:"摩天輪柱"},{r:2,c:8,name:"大樹"},{r:3,c:1,name:"爆米花車"},{r:4,c:7,name:"旋轉木馬"},{r:7,c:6,name:"垃圾桶"},{r:9,c:1,name:"大樹"},{r:8,c:9,name:"員工入口"}],
+  suspects:[
+    {id:"A",name:"Alice",color:"#E63946",img:"assets/avatars/suspect-female-01.png",clue:"在廣場區，在第 6 列，在 Bob 的北邊"},
+    {id:"B",name:"Bob",color:"#457B9D",img:"assets/avatars/suspect-male-01.png",clue:"在第 2 行，在入口區"},
+    {id:"C",name:"Carol",color:"#2A9D8F",img:"assets/avatars/suspect-female-02.png",clue:"在第 10 列"},
+    {id:"D",name:"Dave",color:"#E9C46A",img:"assets/avatars/suspect-male-02.png",clue:"跟爆米花車相鄰，在第 1 列"},
+    {id:"E",name:"Eve",color:"#8338EC",img:"assets/avatars/suspect-female-03.png",clue:"在遊樂區，在第 9 列，在 Dave 的南邊且 Frank 的北邊"},
+    {id:"F",name:"Frank",color:"#F77F00",img:"assets/avatars/suspect-male-03.png",clue:"在美食區，在 Eve 的南邊"},
+    {id:"G",name:"Grace",color:"#06D6A0",img:"assets/avatars/suspect-female-04.png",clue:"在第 3 列，在休息區"},
+    {id:"H",name:"Henry",color:"#118AB2",img:"assets/avatars/suspect-male-04.png",clue:"跟垃圾桶相鄰，在第 8 列"},
+    {id:"I",name:"Iris",color:"#FF006E",img:"assets/avatars/suspect-female-05.png",clue:"在第 4 列，在 Henry 的南邊"},
+    {id:"V",name:"Victor",color:"#808080",img:"assets/avatars/suspect-male-05.png",clue:"在後台區，在棋盤最下面一行（被害者）"}
+  ],
+  solution:{A:[0,5],B:[1,1],C:[2,9],D:[3,0],E:[4,8],F:[5,4],G:[6,2],H:[7,7],I:[8,3],V:[9,6]},
+  murderer:"H",murdererName:"Henry",
+  story:"Henry 在後台與 Victor 獨處，趁四下無人痛下殺手！",
+  terrainOverrides:{}
+};
+
+const PUZZLE_4={
+  id:"beach-expert-4",gridSize:16,
+  regions:{'停車場':{cells:makeRegionCells(0,2,0,4)},'更衣室':{cells:makeRegionCells(0,2,5,7)},'餐廳':{cells:makeRegionCells(0,2,8,11)},'酒吧':{cells:makeRegionCells(0,2,12,15)},'沙灘北':{cells:makeRegionCells(3,5,0,5)},'排球場':{cells:makeRegionCells(3,8,6,11)},'瞭望區':{cells:makeRegionCells(3,11,12,15)},'沙灘南':{cells:makeRegionCells(6,8,0,5)},'淺水區':{cells:makeRegionCells(9,11,0,5)},'衝浪區':{cells:makeRegionCells(9,11,6,11)},'碼頭':{cells:makeRegionCells(12,15,0,7)},'棧道':{cells:makeRegionCells(12,15,8,15)}},
+  regionLabels:{停車場:[0,0],更衣室:[0,7],餐廳:[0,8],酒吧:[0,15],沙灘北:[3,0],排球場:[3,11],瞭望區:[3,15],沙灘南:[8,0],淺水區:[11,0],衝浪區:[9,6],碼頭:[15,0],棧道:[12,15]},
+  decorations:[],
+  blocked:[{r:0,c:1,name:"柱"},{r:1,c:6,name:"置物櫃"},{r:2,c:9,name:"收銀台"},{r:3,c:2,name:"遮陽傘"},{r:3,c:13,name:"望遠鏡"},{r:4,c:4,name:"沙堡"},{r:4,c:8,name:"排球網柱"},{r:5,c:10,name:"計分板"},{r:6,c:1,name:"躺椅"},{r:7,c:5,name:"衝浪板"},{r:9,c:11,name:"浮標"},{r:10,c:0,name:"礁石"},{r:11,c:8,name:"水草"},{r:11,c:9,name:"水草"},{r:12,c:4,name:"繫船柱"},{r:13,c:12,name:"路燈"},{r:14,c:2,name:"木箱"},{r:15,c:15,name:"燈塔"}],
+  suspects:[
+    {id:"A",name:"Amy",color:"#E63946",img:"assets/avatars/suspect-female-01.png",clue:"在衝浪區，在第 7 列，在 Kate 的北邊"},
+    {id:"B",name:"Brian",color:"#457B9D",img:"assets/avatars/suspect-male-01.png",clue:"在酒吧，在第 13 列，在 Eva 的南邊且 Ivy 的北邊"},
+    {id:"C",name:"Chloe",color:"#2A9D8F",img:"assets/avatars/suspect-female-02.png",clue:"在沙灘北，跟沙堡相鄰，在第 4 列"},
+    {id:"D",name:"Derek",color:"#E9C46A",img:"assets/avatars/suspect-male-02.png",clue:"在瞭望區，在第 16 列，在 Chloe 的南邊且 Grace 的北邊"},
+    {id:"E",name:"Eva",color:"#8338EC",img:"assets/avatars/suspect-female-03.png",clue:"在餐廳，在第 1 行"},
+    {id:"F",name:"Felix",color:"#F77F00",img:"assets/avatars/suspect-male-03.png",clue:"在碼頭，在第 1 列，在 Mason 的北邊"},
+    {id:"G",name:"Grace",color:"#06D6A0",img:"assets/avatars/suspect-female-04.png",clue:"在瞭望區的 (7,15)"},
+    {id:"H",name:"Hugo",color:"#118AB2",img:"assets/avatars/suspect-male-04.png",clue:"在碼頭，在第 16 行，在第 6 列"},
+    {id:"I",name:"Ivy",color:"#FF006E",img:"assets/avatars/suspect-female-05.png",clue:"跟 Eva 同區域（餐廳），在第 11 列"},
+    {id:"J",name:"Jake",color:"#073B4C",img:"assets/avatars/suspect-male-05.png",clue:"在排球場，在第 10 列，在第 8 行"},
+    {id:"K",name:"Kate",color:"#EF476F",img:"assets/avatars/suspect-female-06.png",clue:"在淺水區，在第 3 列"},
+    {id:"L",name:"Leo",color:"#06D6A0",img:"assets/avatars/suspect-male-06.png",clue:"在排球場，在第 12 列，在 Jake 的北邊"},
+    {id:"M",name:"Mason",color:"#FFD166",img:"assets/avatars/suspect-male-07.png",clue:"在碼頭，在第 8 列，在 Felix 的南邊"},
+    {id:"N",name:"Nina",color:"#F4845F",img:"assets/avatars/suspect-female-07.png",clue:"在棧道，在第 14 列，在 Mason 的南邊"},
+    {id:"O",name:"Olive",color:"#7B2CBF",img:"assets/avatars/suspect-female-08.png",clue:"在沙灘南，在第 2 列，該區域唯一女性"},
+    {id:"V",name:"Victor",color:"#808080",img:"assets/avatars/suspect-male-08.png",clue:"在淺水區，在第 5 列，在 Kate 的南邊（被害者）"}
+  ],
+  solution:{A:[9,6],B:[1,12],C:[4,3],D:[5,15],E:[0,8],F:[12,0],G:[6,14],H:[15,5],I:[2,10],J:[7,9],K:[10,2],L:[3,11],M:[13,7],N:[14,13],O:[8,1],V:[11,4]},
+  murderer:"K",murdererName:"Kate",
+  story:"Kate 在淺水區與 Victor 獨處，趁海浪掩蓋痕跡犯下了罪行！",
+  terrainOverrides:{}
+};
+
+const ALL_PUZZLES={
+  "apartment-medium-1":PUZZLE_1,
+  "park-hard-3":PUZZLE_3,
+  "beach-expert-4":PUZZLE_4
+};
+
+let PUZZLE=PUZZLE_1;
+let currentPuzzleId="apartment-medium-1";
+const TOTAL=()=>PUZZLE.suspects.length;
 
 let state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],startTime:Date.now(),solved:false};
 
@@ -176,7 +241,7 @@ function ck(r,c){return`${r},${c}`}
 function getRegion(r,c){for(const[n,reg] of Object.entries(PUZZLE.regions)){if(reg.cells.some(([rr,cc])=>rr===r&&cc===c))return n}return null}
 function isBlocked(r,c){return PUZZLE.blocked.some(b=>b.r===r&&b.c===c)}
 function getDecoration(r,c){return PUZZLE.decorations.find(d=>d.r===r&&d.c===c)}
-function regionBorders(r,c){const reg=getRegion(r,c);let cls=[];if(r>0&&getRegion(r-1,c)!==reg)cls.push('border-top');if(r<5&&getRegion(r+1,c)!==reg)cls.push('border-bottom');if(c>0&&getRegion(r,c-1)!==reg)cls.push('border-left');if(c<5&&getRegion(r,c+1)!==reg)cls.push('border-right');return cls.join(' ')}
+function regionBorders(r,c){const gs=PUZZLE.gridSize;const reg=getRegion(r,c);let cls=[];if(r>0&&getRegion(r-1,c)!==reg)cls.push('border-top');if(r<gs-1&&getRegion(r+1,c)!==reg)cls.push('border-bottom');if(c>0&&getRegion(r,c-1)!==reg)cls.push('border-left');if(c<gs-1&&getRegion(r,c+1)!==reg)cls.push('border-right');return cls.join(' ')}
 function isRegionLabel(r,c){for(const[n,pos] of Object.entries(PUZZLE.regionLabels)){if(pos[0]===r&&pos[1]===c)return n}return null}
 
 // Auto-X: mark row/col when someone is placed + clear notes
@@ -219,7 +284,9 @@ function renderSuspects(){
 function renderBoard(){
   const conflicts=getConflicts();
   const board=document.getElementById('board');let html='';
-  for(let r=0;r<6;r++){for(let c=0;c<6;c++){
+  const gs=PUZZLE.gridSize;const cellSize=gs<=6?95:gs<=10?60:38;const noteSize=gs<=6?30:gs<=10?18:12;const badgeSize=gs<=6?22:gs<=10?14:10;
+  document.getElementById('board').style.gridTemplateColumns=`repeat(${gs},${cellSize}px)`;
+  for(let r=0;r<gs;r++){for(let c=0;c<gs;c++){
     const key=ck(r,c);const reg=getRegion(r,c);const blocked=isBlocked(r,c);
     const deco=getDecoration(r,c);const placed=state.placements[key];
     const notes=state.notes[key]||[];const hasX=state.xMarks[key];
@@ -233,10 +300,10 @@ function renderBoard(){
     if(blocked){const b=PUZZLE.blocked.find(b=>b.r===r&&b.c===c);if(b.img){content+=`<div class="decoration" data-tip="${b.name||''}">${b.wide?`<img src="${b.img}" style="width:160%;height:80%;position:absolute;left:10%">`:`<img src="${b.img}">`}</div>`}else if(b.img===null){/* blocked but no image */}else{content+=`<div class="decoration" data-tip="${b.name||''}">${b.icon||''}</div>`}}
     if(hasX)content+=`<div class="x-mark">✕</div>`;
     else if(hasAutoX&&!blocked)content+=`<div class="auto-x">✕</div>`;
-    if(suspect)content+=`<img src="${suspect.img}" style="width:80%;height:80%;object-fit:cover;border-radius:4px;position:relative;z-index:5"><div style="position:absolute;bottom:2px;right:4px;font-size:22px;font-weight:700;color:${suspect.color};z-index:6;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000">${suspect.id}</div>`;
-    else if(!blocked&&notes.length>0)content+=`<div class="notes">${notes.map(n=>{const s=PUZZLE.suspects.find(x=>x.id===n);return`<span class="note" style="color:${s.color}">${s.id}</span>`}).join('')}</div>`;
-    const terrainUrl=PUZZLE.terrainOverrides&&PUZZLE.terrainOverrides[key];const terrainStyle=terrainUrl?`style="background:url('${terrainUrl}') center/cover"`:'';
-    html+=`<div class="cell region-${reg} ${blocked?'blocked':''} ${borders} ${conflict}" id="cell-${key}" ${terrainStyle} onclick="cellClick(${r},${c})" onmousedown="cellDown(${r},${c})" onmouseup="cellUp()" ontouchstart="cellDown(${r},${c})" ontouchend="cellUp()">${content}</div>`;
+    if(suspect)content+=`<img src="${suspect.img}" style="width:80%;height:80%;object-fit:cover;border-radius:4px;position:relative;z-index:5"><div style="position:absolute;bottom:1px;right:2px;font-size:${badgeSize}px;font-weight:700;color:${suspect.color};z-index:6;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000">${suspect.id}</div>`;
+    else if(!blocked&&notes.length>0)content+=`<div class="notes">${notes.map(n=>{const s=PUZZLE.suspects.find(x=>x.id===n);return`<span class="note" style="color:${s.color};font-size:${noteSize}px">${s.id}</span>`}).join('')}</div>`;
+    const terrainUrl=PUZZLE.terrainOverrides&&PUZZLE.terrainOverrides[key];
+    html+=`<div class="cell region-${reg} ${blocked?'blocked':''} ${borders} ${conflict}" id="cell-${key}" style="width:${cellSize}px;height:${cellSize}px;${terrainUrl?`background:url('${terrainUrl}') center/cover`:''}" onclick="cellClick(${r},${c})" onmousedown="cellDown(${r},${c})" onmouseup="cellUp()" ontouchstart="cellDown(${r},${c})" ontouchend="cellUp()">${content}</div>`;
   }}
   board.innerHTML=html;
 }
@@ -279,9 +346,9 @@ function removeClearRing(){const btn=document.getElementById('clear-btn');if(btn
 function pushHistory(){state.history.push({p:{...state.placements},n:JSON.parse(JSON.stringify(state.notes)),x:{...state.xMarks}});if(state.history.length>50)state.history.shift()}
 
 function updateSubmit(){
-  const btn=document.getElementById('btn-submit');const count=Object.keys(state.placements).length;
-  const ready=count>=TOTAL;btn.classList.toggle('disabled',!ready);
-  btn.innerHTML=ready?'🔍 提交答案':`提交<br><small style="font-size:12px">（已放 ${count}/${TOTAL}）</small>`;
+  const btn=document.getElementById('btn-submit');const count=Object.keys(state.placements).length;const total=TOTAL();
+  const ready=count>=total;btn.classList.toggle('disabled',!ready);
+  btn.innerHTML=ready?'🔍 提交答案':`提交<br><small style="font-size:12px">（已放 ${count}/${total}）</small>`;
 }
 function submitAnswer(){
   if(document.getElementById('btn-submit').classList.contains('disabled'))return;
@@ -295,23 +362,23 @@ function submitAnswer(){
   }
   if(allCorrect){
     state.solved=true;const elapsed=Math.floor((Date.now()-state.startTime)/1000);
-    const prev=JSON.parse(localStorage.getItem('mrd_puzzle_apartment-medium-1')||'{}');
+    const prev=JSON.parse(localStorage.getItem('mrd_puzzle_'+currentPuzzleId)||'{}');
     const best=prev.bestTime?Math.min(prev.bestTime,elapsed):elapsed;
-    localStorage.setItem('mrd_puzzle_apartment-medium-1',JSON.stringify({status:'completed',bestTime:best}));
+    localStorage.setItem('mrd_puzzle_'+currentPuzzleId,JSON.stringify({status:'completed',bestTime:best}));
     document.getElementById('murderer-text').textContent=`兇手是：${PUZZLE.murdererName}！`;
     document.getElementById('story-text').textContent=PUZZLE.story;
     document.getElementById('result-time').textContent=`破案時間：${Math.floor(elapsed/60)}分${elapsed%60}秒`;
-    setTimeout(()=>{document.getElementById('overlay').classList.add('show');const hasNext=PUZZLES.some(p=>{const sv=localStorage.getItem('mrd_puzzle_'+p.id);const st=sv?JSON.parse(sv).status:'not_started';return st!=='completed'&&p.id!=='apartment-medium-1'});document.getElementById('btn-next').style.display=hasNext?'inline-block':'none'},600);
-    localStorage.removeItem('murdoku_save');
+    setTimeout(()=>{document.getElementById('overlay').classList.add('show');const hasNext=PUZZLES.some(p=>{const sv=localStorage.getItem('mrd_puzzle_'+p.id);const st=sv?JSON.parse(sv).status:'not_started';return st!=='completed'&&p.id!==currentPuzzleId});document.getElementById('btn-next').style.display=hasNext?'inline-block':'none'},600);
+    localStorage.removeItem('murdoku_save_'+currentPuzzleId);
   }else{const t=document.getElementById('error-toast');t.style.display='block';setTimeout(()=>t.style.display='none',3000)}
 }
 function showHelp(){alert("【玩法】\n1. 點選左側嫌疑人\n2. 點格子 = 筆記（再點取消）\n3. 長按格子 = 放置\n4. ✖按鈕 = 標記排除模式\n5. 全部放完後按提交\n\n【規則】\n• 每行每列只能放一人\n• 灰點 = 已被佔的行/列\n• 紅框 = 行列衝突警告\n• 找出與 Victor 獨處同區域的兇手")}
 function confirmExit(){goHome()}
-function resetGame(){localStorage.removeItem('murdoku_save');state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],startTime:Date.now(),solved:false};document.getElementById('overlay').classList.remove('show');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('error','correct','row-conflict'));render()}
+function resetGame(){localStorage.removeItem('murdoku_save_'+currentPuzzleId);state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],startTime:Date.now(),solved:false};document.getElementById('overlay').classList.remove('show');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('error','correct','row-conflict'));render()}
 
 setInterval(()=>{if(state.solved)return;const e=Math.floor((Date.now()-state.startTime)/1000);document.getElementById('timer').textContent=`${String(Math.floor(e/60)).padStart(2,'0')}:${String(e%60).padStart(2,'0')}`},1000);
-function saveState(){localStorage.setItem('murdoku_save',JSON.stringify({p:state.placements,n:state.notes,x:state.xMarks,t:state.startTime,s:state.solved}));if(!state.solved&&(Object.keys(state.placements).length>0||Object.keys(state.notes).length>0))localStorage.setItem('mrd_puzzle_apartment-medium-1',JSON.stringify({status:'in_progress'}))}
-function loadState(){const raw=localStorage.getItem('murdoku_save');if(raw){try{const d=JSON.parse(raw);state.placements=d.p||{};state.notes=d.n||{};state.xMarks=d.x||{};state.startTime=d.t||Date.now();state.solved=d.s||false}catch(e){}}}
+function saveState(){localStorage.setItem('murdoku_save_'+currentPuzzleId,JSON.stringify({p:state.placements,n:state.notes,x:state.xMarks,t:state.startTime,s:state.solved}));if(!state.solved&&(Object.keys(state.placements).length>0||Object.keys(state.notes).length>0))localStorage.setItem('mrd_puzzle_'+currentPuzzleId,JSON.stringify({status:'in_progress'}))}
+function loadState(){const raw=localStorage.getItem('murdoku_save_'+currentPuzzleId);if(raw){try{const d=JSON.parse(raw);state.placements=d.p||{};state.notes=d.n||{};state.xMarks=d.x||{};state.startTime=d.t||Date.now();state.solved=d.s||false}catch(e){}}}
 loadState();render();
 
 // Tooltip overflow fix
@@ -330,7 +397,9 @@ document.addEventListener('mouseover',function(e){
 
 // === HOMEPAGE ===
 const PUZZLES=[
-  {id:"apartment-medium-1",name:"珠寶失竊案",scene:"住家公寓",icon:"🏠",difficulty:"中等",diffColor:"#457B9D",size:"6×6",suspects:5,thumbnail:"assets/thumbnails/apartment-medium-1.png"}
+  {id:"apartment-medium-1",name:"珠寶失竊案",scene:"住家公寓",icon:"🏠",difficulty:"中等",diffColor:"#457B9D",size:"6×6",suspects:5,thumbnail:"assets/thumbnails/apartment-medium-1.png"},
+  {id:"park-hard-3",name:"遊樂園驚魂",scene:"遊樂園",icon:"🎡",difficulty:"困難",diffColor:"#F77F00",size:"10×10",suspects:9},
+  {id:"beach-expert-4",name:"海灘謀殺案",scene:"海灘度假村",icon:"🏖️",difficulty:"專家",diffColor:"#E63946",size:"16×16",suspects:15}
 ];
 
 let currentDiffFilter='all';
@@ -369,9 +438,13 @@ function filterDiff(diff){
 }
 
 function startPuzzle(id){
+  if(ALL_PUZZLES[id]){PUZZLE=ALL_PUZZLES[id];currentPuzzleId=id;}
   document.getElementById('home-page').style.display='none';
   document.getElementById('game-page').style.display='';
-  state.startTime=Date.now();
+  // Reset state for new puzzle
+  const save=localStorage.getItem('murdoku_save_'+id);
+  if(save){const d=JSON.parse(save);state.placements=d.p||{};state.notes=d.n||{};state.xMarks=d.x||{};state.startTime=d.t||Date.now();state.solved=d.s||false;}
+  else{state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],startTime:Date.now(),solved:false};}
   render();
 }
 
