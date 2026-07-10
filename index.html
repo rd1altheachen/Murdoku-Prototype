@@ -75,9 +75,44 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .overlay .time-display{font-size:16px;color:#FFC107;margin-bottom:20px}
 .overlay button{background:#53A8B6;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:14px;cursor:pointer}
 .error-toast{position:fixed;top:20px;right:20px;background:#E94560;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;display:none;z-index:50}
+.home-container{max-width:960px;margin:0 auto;padding:24px;min-height:100vh}
+.home-header{text-align:center;margin-bottom:24px}
+.home-logo{font-size:32px;font-weight:700;color:#E94560}
+.home-subtitle{color:#9E9E9E;font-size:16px;margin-top:8px}
+.home-filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:24px}
+.filter-pill{padding:6px 16px;border-radius:20px;border:1px solid #444;background:transparent;color:#EAEAEA;cursor:pointer;font-size:14px;transition:all .2s}
+.filter-pill.active{background:#53A8B6;border-color:#53A8B6;color:#fff}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.puzzle-card{background:#16213E;border-radius:12px;overflow:hidden;transition:transform 0.2s;cursor:default}
+.puzzle-card:hover{transform:translateY(-4px)}
+.puzzle-card .card-scene{height:120px;background:linear-gradient(135deg,#16213E,#0F3460);display:flex;align-items:center;justify-content:center;font-size:48px}
+.puzzle-card .card-body{padding:16px}
+.puzzle-card .card-title{font-size:16px;font-weight:600;margin-bottom:8px;color:#EAEAEA}
+.puzzle-card .card-meta{font-size:13px;color:#9E9E9E;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.puzzle-card .diff-tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;color:#fff}
+.puzzle-card .card-status{font-size:12px;color:#9E9E9E;margin-bottom:12px}
+.puzzle-card .card-btn{display:block;width:100%;padding:10px;background:#53A8B6;color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer;transition:background .2s}
+.puzzle-card .card-btn:hover{background:#3d8a96}
 </style>
 </head>
 <body>
+<div id="home-page">
+  <div class="home-container">
+    <div class="home-header">
+      <div class="home-logo">🔍 Murdoku 推理謎盤</div>
+      <p class="home-subtitle">閱讀線索，用邏輯推理找出兇手</p>
+    </div>
+    <div class="home-filters">
+      <span class="filter-pill active" onclick="filterDiff('all')">全部</span>
+      <span class="filter-pill" onclick="filterDiff('簡單')">簡單</span>
+      <span class="filter-pill" onclick="filterDiff('中等')">中等</span>
+      <span class="filter-pill" onclick="filterDiff('困難')">困難</span>
+      <span class="filter-pill" onclick="filterDiff('專家')">專家</span>
+    </div>
+    <div class="home-grid" id="puzzle-grid"></div>
+  </div>
+</div>
+<div id="game-page" style="display:none">
 <div class="game-container">
   <div class="left-panel">
     <div class="logo">🔍 Murdoku 推理謎盤</div>
@@ -106,6 +141,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
   <button onclick="resetGame()">重新開始</button>
 </div>
 <div class="error-toast" id="error-toast">有放置錯誤，請檢查紅色標記的格子</div>
+</div><!-- end game-page -->
 
 <script>
 const PUZZLE={
@@ -255,6 +291,9 @@ function submitAnswer(){
   }
   if(allCorrect){
     state.solved=true;const elapsed=Math.floor((Date.now()-state.startTime)/1000);
+    const prev=JSON.parse(localStorage.getItem('mrd_puzzle_apartment-medium-1')||'{}');
+    const best=prev.bestTime?Math.min(prev.bestTime,elapsed):elapsed;
+    localStorage.setItem('mrd_puzzle_apartment-medium-1',JSON.stringify({status:'completed',bestTime:best}));
     document.getElementById('murderer-text').textContent=`兇手是：${PUZZLE.murdererName}！`;
     document.getElementById('story-text').textContent=PUZZLE.story;
     document.getElementById('result-time').textContent=`破案時間：${Math.floor(elapsed/60)}分${elapsed%60}秒`;
@@ -263,11 +302,11 @@ function submitAnswer(){
   }else{const t=document.getElementById('error-toast');t.style.display='block';setTimeout(()=>t.style.display='none',3000)}
 }
 function showHelp(){alert("【玩法】\n1. 點選左側嫌疑人\n2. 點格子 = 筆記（再點取消）\n3. 長按格子 = 放置\n4. ✖按鈕 = 標記排除模式\n5. 全部放完後按提交\n\n【規則】\n• 每行每列只能放一人\n• 灰點 = 已被佔的行/列\n• 紅框 = 行列衝突警告\n• 找出與 Victor 獨處同區域的兇手")}
-function confirmExit(){if(confirm('進度已自動儲存。確定退出？'))history.back()}
+function confirmExit(){goHome()}
 function resetGame(){localStorage.removeItem('murdoku_save');state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],startTime:Date.now(),solved:false};document.getElementById('overlay').classList.remove('show');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('error','correct','row-conflict'));render()}
 
 setInterval(()=>{if(state.solved)return;const e=Math.floor((Date.now()-state.startTime)/1000);document.getElementById('timer').textContent=`${String(Math.floor(e/60)).padStart(2,'0')}:${String(e%60).padStart(2,'0')}`},1000);
-function saveState(){localStorage.setItem('murdoku_save',JSON.stringify({p:state.placements,n:state.notes,x:state.xMarks,t:state.startTime,s:state.solved}))}
+function saveState(){localStorage.setItem('murdoku_save',JSON.stringify({p:state.placements,n:state.notes,x:state.xMarks,t:state.startTime,s:state.solved}));if(!state.solved&&(Object.keys(state.placements).length>0||Object.keys(state.notes).length>0))localStorage.setItem('mrd_puzzle_apartment-medium-1',JSON.stringify({status:'in_progress'}))}
 function loadState(){const raw=localStorage.getItem('murdoku_save');if(raw){try{const d=JSON.parse(raw);state.placements=d.p||{};state.notes=d.n||{};state.xMarks=d.x||{};state.startTime=d.t||Date.now();state.solved=d.s||false}catch(e){}}}
 loadState();render();
 
@@ -284,6 +323,62 @@ document.addEventListener('mouseover',function(e){
     else if(rect.left<0){tip.style.left='0';tip.style.transform='none'}
   });
 });
+
+// === HOMEPAGE ===
+const PUZZLES=[
+  {id:"apartment-medium-1",name:"珠寶失竊案",scene:"住家公寓",icon:"🏠",difficulty:"困難",diffColor:"#E63946",size:"6×6",suspects:5}
+];
+
+let currentDiffFilter='all';
+
+function renderHomePage(){
+  const grid=document.getElementById('puzzle-grid');
+  if(!grid)return;
+  let html='';
+  PUZZLES.forEach(p=>{
+    if(currentDiffFilter!=='all'&&p.difficulty!==currentDiffFilter)return;
+    const save=localStorage.getItem('mrd_puzzle_'+p.id);
+    let status='未開始',btnText='開始',bestTime='';
+    if(save){
+      const d=JSON.parse(save);
+      if(d.status==='completed'){status='✅ 已完成';btnText='重玩';if(d.bestTime)bestTime=' | 最佳：'+Math.floor(d.bestTime/60)+'分'+d.bestTime%60+'秒'}
+      else if(d.status==='in_progress'){status='🔄 進行中';btnText='繼續'}
+    }
+    html+=`<div class="puzzle-card">
+      <div class="card-scene">${p.icon}</div>
+      <div class="card-body">
+        <div class="card-title">${p.name}</div>
+        <div class="card-meta"><span class="diff-tag" style="background:${p.diffColor}">${p.difficulty}</span><span>${p.size}</span><span>${p.suspects}人</span></div>
+        <div class="card-status">${status}${bestTime}</div>
+        <button class="card-btn" onclick="startPuzzle('${p.id}')">${btnText}</button>
+      </div>
+    </div>`;
+  });
+  grid.innerHTML=html;
+}
+
+function filterDiff(diff){
+  currentDiffFilter=diff;
+  document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  renderHomePage();
+}
+
+function startPuzzle(id){
+  document.getElementById('home-page').style.display='none';
+  document.getElementById('game-page').style.display='';
+  state.startTime=Date.now();
+  render();
+}
+
+function goHome(){
+  saveState();
+  document.getElementById('game-page').style.display='none';
+  document.getElementById('home-page').style.display='';
+  renderHomePage();
+}
+
+renderHomePage();
 </script>
 </body>
 </html>
