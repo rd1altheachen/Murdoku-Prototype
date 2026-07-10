@@ -399,9 +399,9 @@ document.addEventListener('mouseover',function(e){
 
 // === HOMEPAGE ===
 const PUZZLES=[
-  {id:"apartment-medium-1",name:"珠寶失竊案",scene:"住家公寓",icon:"🏠",difficulty:"中等",diffColor:"#457B9D",size:"6×6",suspects:5,thumbnail:"assets/thumbnails/apartment-medium-1.png"},
-  {id:"park-hard-3",name:"遊樂園驚魂",scene:"遊樂園",icon:"🎡",difficulty:"困難",diffColor:"#F77F00",size:"10×10",suspects:9},
-  {id:"beach-expert-4",name:"海灘謀殺案",scene:"海灘度假村",icon:"🏖️",difficulty:"專家",diffColor:"#E63946",size:"16×16",suspects:15}
+  {id:"apartment-medium-1",name:"珠寶失竊案",scene:"住家公寓",icon:"🏠",difficulty:"中等",diffColor:"#457B9D",size:"6×6",suspects:5,thumbnail:"assets/thumbnails/apartment-medium-1.png",dev:false},
+  {id:"park-hard-3",name:"遊樂園驚魂",scene:"遊樂園",icon:"🎡",difficulty:"困難",diffColor:"#F77F00",size:"10×10",suspects:9,dev:true},
+  {id:"beach-expert-4",name:"海灘謀殺案",scene:"海灘度假村",icon:"🏖️",difficulty:"專家",diffColor:"#E63946",size:"16×16",suspects:15,dev:true}
 ];
 
 let currentDiffFilter='all';
@@ -421,7 +421,7 @@ function renderHomePage(){
       else if(d.status==='in_progress'){status='🔄 進行中';btnText='繼續'}
     }
     html+=`<div class="puzzle-card">
-      <div class="card-scene" style="${p.thumbnail?`background:url('${p.thumbnail}') center/cover`:''}">${p.thumbnail?'':p.icon}<div class="dev-stamp">開發中</div>${isCompleted?'<div class="done-stamp">完成</div>':''}</div>
+      <div class="card-scene" style="${p.thumbnail?`background:url('${p.thumbnail}') center/cover`:''}">${p.thumbnail?'':p.icon}${p.dev?'<div class="dev-stamp">開發中</div>':''}${isCompleted?'<div class="done-stamp">完成</div>':''}</div>
       <div class="card-body">
         <div class="card-title">${p.name}</div>
         <div class="card-meta"><span class="diff-tag" style="background:${p.diffColor}">${p.difficulty}</span><span>${p.size}</span><span>${p.suspects}人</span></div>
