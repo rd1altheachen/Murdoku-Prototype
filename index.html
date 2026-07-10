@@ -85,7 +85,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,280px));gap:16px}
 .puzzle-card{background:#16213E;border-radius:12px;overflow:hidden;transition:transform 0.2s;cursor:default}
 .puzzle-card:hover{transform:translateY(-4px)}
-.puzzle-card .card-scene{width:100%;aspect-ratio:1;background:linear-gradient(135deg,#16213E,#0F3460) center/cover;display:flex;align-items:center;justify-content:center;font-size:48px;background-size:cover;background-position:center}
+.puzzle-card .card-scene{width:100%;aspect-ratio:1;background:linear-gradient(135deg,#16213E,#0F3460) center/cover;display:flex;align-items:center;justify-content:center;font-size:48px;background-size:cover;background-position:center;position:relative}
+.dev-stamp{position:absolute;top:16px;left:12px;transform:rotate(-18deg);border:3px solid #E94560;border-radius:4px;padding:4px 12px;font-size:14px;font-weight:700;color:#E94560;opacity:0.8;pointer-events:none;z-index:5;letter-spacing:2px}
 .puzzle-card .card-body{padding:16px}
 .puzzle-card .card-title{font-size:16px;font-weight:600;margin-bottom:8px;color:#EAEAEA}
 .puzzle-card .card-meta{font-size:13px;color:#9E9E9E;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -418,7 +419,7 @@ function renderHomePage(){
       else if(d.status==='in_progress'){status='🔄 進行中';btnText='繼續'}
     }
     html+=`<div class="puzzle-card">
-      <div class="card-scene" style="${p.thumbnail?`background:url('${p.thumbnail}') center/cover`:''}">${p.thumbnail?'':p.icon}</div>
+      <div class="card-scene" style="${p.thumbnail?`background:url('${p.thumbnail}') center/cover`:''}">${p.thumbnail?'':p.icon}<div class="dev-stamp">開發中</div></div>
       <div class="card-body">
         <div class="card-title">${p.name}</div>
         <div class="card-meta"><span class="diff-tag" style="background:${p.diffColor}">${p.difficulty}</span><span>${p.size}</span><span>${p.suspects}人</span></div>
