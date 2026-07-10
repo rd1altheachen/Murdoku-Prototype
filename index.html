@@ -114,7 +114,7 @@ const PUZZLE={
   // Region label positions: one cell per region to show the name
   regionLabels:{客廳:[0,0],書房:[0,5],花園:[5,0],廚房:[5,4]},
   decorations:[],
-  blocked:[{r:4,c:1,name:"雕像",img:"assets/scene-museum/item-statue.png"},{r:5,c:5,name:"壁爐",img:"assets/scene-apartment/item-fireplace.png"},{r:1,c:2,name:"花瓶",img:"assets/scene-apartment/item-vase.png"},{r:3,c:4,name:"冰箱",img:"assets/scene-apartment/item-fridge.png"}],
+  blocked:[{r:4,c:1,name:"雕像",img:"assets/scene-museum/item-statue.png"},{r:5,c:4,name:"壁爐",img:"assets/scene-apartment/item-fireplace.png",wide:true},{r:5,c:5,name:"壁爐",img:null},{r:1,c:2,name:"花瓶",img:"assets/scene-apartment/item-vase.png"},{r:3,c:4,name:"冰箱",img:"assets/scene-apartment/item-fridge.png"}],
   suspects:[
     {id:"A",name:"Adam",color:"#E63946",img:"assets/avatars/suspect-male-01.png",clue:'Adam 在第 5 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>'},
     {id:"B",name:"Beth",color:"#457B9D",img:"assets/avatars/suspect-female-01.png",clue:'Beth 跟花瓶<span class="keyword">相鄰<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>，且<span class="keyword">獨自<span class="kw-tooltip">該人所在的區域內沒有其他人</span></span>待著'},
@@ -190,7 +190,7 @@ function renderBoard(){
     let content='';
     if(regLabel)content+=`<div class="region-tag">${regLabel}</div>`;
     if(deco)content+=`<div class="decoration" data-tip="${deco.name}">${deco.icon}</div>`;
-    if(blocked){const b=PUZZLE.blocked.find(b=>b.r===r&&b.c===c);content+=`<div class="decoration" data-tip="${b.name||''}">${b.img?`<img src="${b.img}">`:(b.icon||'')}</div>`}
+    if(blocked){const b=PUZZLE.blocked.find(b=>b.r===r&&b.c===c);if(b.img){content+=`<div class="decoration" data-tip="${b.name||''}">${b.wide?`<img src="${b.img}" style="width:160%;height:80%;position:absolute;left:10%">`:`<img src="${b.img}">`}</div>`}else if(b.img===null){/* blocked but no image */}else{content+=`<div class="decoration" data-tip="${b.name||''}">${b.icon||''}</div>`}}
     if(hasX)content+=`<div class="x-mark">✕</div>`;
     else if(hasAutoX&&!blocked)content+=`<div class="auto-x">✕</div>`;
     if(suspect)content+=`<img src="${suspect.img}" style="width:80%;height:80%;object-fit:cover;border-radius:4px;position:relative;z-index:5"><div style="position:absolute;bottom:2px;right:4px;font-size:16px;font-weight:700;color:${suspect.color};z-index:6">${suspect.id}</div>`;
