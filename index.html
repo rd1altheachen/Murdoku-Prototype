@@ -8,20 +8,20 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;height:100vh;overflow:hidden}
-.game-container{display:grid;grid-template-columns:280px 1fr 180px;height:100vh}
+.game-container{display:grid;grid-template-columns:560px 1fr 180px;height:100vh}
 .left-panel{background:#16213E;padding:14px;overflow-y:auto;border-right:1px solid #2a2a4e}
 .logo{font-size:22px;font-weight:700;color:#E94560;margin-bottom:4px}
 .timer{font-size:28px;font-weight:600;color:#FFC107;margin-bottom:8px;font-variant-numeric:tabular-nums}
 .puzzle-title{font-size:18px;font-weight:600;margin-bottom:8px;color:#53A8B6}
 .general-clue{background:#0F3460;border-radius:8px;padding:10px;margin-bottom:12px;font-size:14px;color:#9E9E9E;line-height:1.4}
 .section-title{font-size:16px;font-weight:600;color:#FFC107;margin-bottom:6px}
-.suspects-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.suspect-row{background:#0F3460;border:2px solid transparent;border-radius:6px;padding:8px;cursor:pointer;transition:all .2s;user-select:none;display:flex;align-items:flex-start;gap:10px}
+.suspects-list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.suspect-row{background:#0F3460;border:2px solid transparent;border-radius:6px;padding:8px;cursor:pointer;transition:all .2s;user-select:none;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px}
 .suspect-row:hover{border-color:#53A8B6}
 .suspect-row.selected{border-color:#FFC107;background:#1a2a4e;box-shadow:0 0 8px rgba(255,193,7,.3)}
 .suspect-row.placed{opacity:.4}
-.suspect-row .avatar{width:46px;height:46px;min-width:46px;border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.suspect-row .info{flex:1}
+.suspect-row .avatar{width:80px;height:80px;min-width:80px;border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.suspect-row .info{text-align:center}
 .suspect-row .name{font-size:16px;font-weight:600;margin-bottom:3px}
 .suspect-row .clue{font-size:15px;color:#9E9E9E;line-height:1.3}
 .suspect-row.selected .clue{color:#FFC107}
@@ -186,7 +186,7 @@ function renderBoard(){
     if(blocked){const b=PUZZLE.blocked.find(b=>b.r===r&&b.c===c);content+=`<div class="decoration" data-tip="${b.name||''}">${b.icon}</div>`}
     if(hasX)content+=`<div class="x-mark">✕</div>`;
     else if(hasAutoX&&!blocked)content+=`<div class="auto-x">✕</div>`;
-    if(suspect)content+=`<div class="placed-suspect" style="color:${suspect.color}">${suspect.id}</div><div class="placed-name" style="color:${suspect.color}">${suspect.name}</div>`;
+    if(suspect)content+=`<img src="${suspect.img}" style="width:80%;height:80%;object-fit:cover;border-radius:4px;position:relative;z-index:2"><div style="position:absolute;bottom:2px;right:4px;font-size:16px;font-weight:700;color:${suspect.color};z-index:3">${suspect.id}</div>`;
     else if(!blocked&&notes.length>0)content+=`<div class="notes">${notes.map(n=>{const s=PUZZLE.suspects.find(x=>x.id===n);return`<span class="note" style="color:${s.color}">${s.id}</span>`}).join('')}</div>`;
     html+=`<div class="cell region-${reg} ${blocked?'blocked':''} ${borders} ${conflict}" id="cell-${key}" onclick="cellClick(${r},${c})" onmousedown="cellDown(${r},${c})" onmouseup="cellUp()" ontouchstart="cellDown(${r},${c})" ontouchend="cellUp()">${content}</div>`;
   }}
