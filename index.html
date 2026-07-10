@@ -138,7 +138,11 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
   <div class="reveal" id="murderer-text"></div>
   <div class="story" id="story-text"></div>
   <div class="time-display" id="result-time"></div>
-  <button onclick="resetGame()">重新開始</button>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+    <button onclick="document.getElementById('overlay').classList.remove('show');goHome()" style="background:#53A8B6;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:14px;cursor:pointer">回到謎題列表</button>
+    <button onclick="resetGame()" style="background:#53A8B6;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:14px;cursor:pointer">重新開始</button>
+    <button id="btn-next" onclick="goNext()" style="background:#E94560;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:14px;cursor:pointer;display:none">下一關</button>
+  </div>
 </div>
 <div class="error-toast" id="error-toast">有放置錯誤，請檢查紅色標記的格子</div>
 </div><!-- end game-page -->
@@ -297,7 +301,7 @@ function submitAnswer(){
     document.getElementById('murderer-text').textContent=`兇手是：${PUZZLE.murdererName}！`;
     document.getElementById('story-text').textContent=PUZZLE.story;
     document.getElementById('result-time').textContent=`破案時間：${Math.floor(elapsed/60)}分${elapsed%60}秒`;
-    setTimeout(()=>document.getElementById('overlay').classList.add('show'),600);
+    setTimeout(()=>{document.getElementById('overlay').classList.add('show');const hasNext=PUZZLES.some(p=>{const sv=localStorage.getItem('mrd_puzzle_'+p.id);const st=sv?JSON.parse(sv).status:'not_started';return st!=='completed'&&p.id!=='apartment-medium-1'});document.getElementById('btn-next').style.display=hasNext?'inline-block':'none'},600);
     localStorage.removeItem('murdoku_save');
   }else{const t=document.getElementById('error-toast');t.style.display='block';setTimeout(()=>t.style.display='none',3000)}
 }
@@ -376,6 +380,11 @@ function goHome(){
   document.getElementById('game-page').style.display='none';
   document.getElementById('home-page').style.display='';
   renderHomePage();
+}
+
+function goNext(){
+  document.getElementById('overlay').classList.remove('show');
+  // placeholder: currently only one puzzle
 }
 
 renderHomePage();
