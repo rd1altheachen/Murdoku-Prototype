@@ -92,7 +92,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
     <div class="tool-btn" id="clear-btn" onmousedown="startClear()" onmouseup="endClear()" ontouchstart="startClear()" ontouchend="endClear()">🗑 清除全部<br><small style="color:#9E9E9E;font-size:12px">（長按）</small></div>
     <div class="tool-btn" onclick="undo()">↩ 撤銷</div>
     <div class="tool-btn" id="btn-x" onclick="toggleXMode()">✖ 標記排除</div>
-    <div class="tool-btn" id="btn-eraser" onclick="toggleEraserMode()">🧹 清除筆記</div>
+    <div class="tool-btn" id="btn-eraser" onclick="toggleEraserMode()">🧹 清除</div>
     <div class="tool-btn" onclick="showHelp()">❓ 玩法</div>
     <button class="submit-btn disabled" id="btn-submit" onclick="submitAnswer()">提交<br><small>（請先放置所有人）</small></button>
   </div>
@@ -208,7 +208,7 @@ function cellUp(){if(pressTimer){clearTimeout(pressTimer);pressTimer=null}remove
 function removePressRing(){if(pressCell){const ring=pressCell.querySelector('.press-ring');if(ring)ring.remove();pressCell=null}}
 function cellClick(r,c){
   if(state.solved||isBlocked(r,c))return;const key=ck(r,c);
-  if(state.eraserMode){pushHistory();state.notes[key]=[];render();saveState();return}
+  if(state.eraserMode){pushHistory();if(state.placements[key])delete state.placements[key];state.notes[key]=[];delete state.xMarks[key];render();saveState();return}
   if(state.xMode){pushHistory();if(state.xMarks[key])delete state.xMarks[key];else{state.xMarks[key]=true;state.notes[key]=[]}render();saveState();return}
   if(!state.selected)return;if(state.placements[key])return;
   pushHistory();if(!state.notes[key])state.notes[key]=[];
