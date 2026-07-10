@@ -33,7 +33,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .cell{width:95px;height:95px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .15s;border:1px solid #333;user-select:none}
 .cell:hover{filter:brightness(1.2)}
 .cell.region-客廳{background:url('assets/scene-apartment/terrain-wood-floor.png') center/cover}
-.cell.region-書房{background:url('assets/scene-apartment/terrain-carpet.png') center/cover}
+.cell.region-書房{background:url('assets/scene-apartment/terrain-wood-floor.png') center/cover}
 .cell.region-花園{background:url('assets/common/terrain-grass.png') center/cover}
 .cell.region-廚房{background:url('assets/scene-apartment/terrain-tile.png') center/cover}
 .cell.blocked{cursor:not-allowed}
@@ -125,7 +125,8 @@ const PUZZLE={
   ],
   solution:{A:[0,4],B:[1,1],C:[2,5],D:[3,3],E:[4,0],V:[5,2]},
   murderer:"E",murdererName:"Eric",
-  story:"Eric 在花園與 Victor 獨處，趁夜色掩護犯下了罪行！"
+  story:"Eric 在花園與 Victor 獨處，趁夜色掩護犯下了罪行！",
+  terrainOverrides:{"1,4":"assets/scene-apartment/terrain-carpet.png","1,5":"assets/scene-apartment/terrain-carpet.png","3,1":"assets/common/terrain-stone-path.png","5,1":"assets/common/terrain-stone-path.png"}
 };
 const TOTAL=6;
 
@@ -194,7 +195,8 @@ function renderBoard(){
     else if(hasAutoX&&!blocked)content+=`<div class="auto-x">✕</div>`;
     if(suspect)content+=`<img src="${suspect.img}" style="width:80%;height:80%;object-fit:cover;border-radius:4px;position:relative;z-index:5"><div style="position:absolute;bottom:2px;right:4px;font-size:16px;font-weight:700;color:${suspect.color};z-index:6">${suspect.id}</div>`;
     else if(!blocked&&notes.length>0)content+=`<div class="notes">${notes.map(n=>{const s=PUZZLE.suspects.find(x=>x.id===n);return`<span class="note" style="color:${s.color}">${s.id}</span>`}).join('')}</div>`;
-    html+=`<div class="cell region-${reg} ${blocked?'blocked':''} ${borders} ${conflict}" id="cell-${key}" onclick="cellClick(${r},${c})" onmousedown="cellDown(${r},${c})" onmouseup="cellUp()" ontouchstart="cellDown(${r},${c})" ontouchend="cellUp()">${content}</div>`;
+    const terrainUrl=PUZZLE.terrainOverrides&&PUZZLE.terrainOverrides[key];const terrainStyle=terrainUrl?`style="background:url('${terrainUrl}') center/cover"`:'';
+    html+=`<div class="cell region-${reg} ${blocked?'blocked':''} ${borders} ${conflict}" id="cell-${key}" ${terrainStyle} onclick="cellClick(${r},${c})" onmousedown="cellDown(${r},${c})" onmouseup="cellUp()" ontouchstart="cellDown(${r},${c})" ontouchend="cellUp()">${content}</div>`;
   }}
   board.innerHTML=html;
 }
