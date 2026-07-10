@@ -326,7 +326,7 @@ document.addEventListener('mouseover',function(e){
 
 // === HOMEPAGE ===
 const PUZZLES=[
-  {id:"apartment-medium-1",name:"珠寶失竊案",scene:"住家公寓",icon:"🏠",difficulty:"困難",diffColor:"#E63946",size:"6×6",suspects:5}
+  {id:"apartment-medium-1",name:"珠寶失竊案",scene:"住家公寓",icon:"🏠",difficulty:"中等",diffColor:"#457B9D",size:"6×6",suspects:5,thumbnail:"assets/thumbnails/apartment-medium-1.png"}
 ];
 
 let currentDiffFilter='all';
@@ -345,7 +345,7 @@ function renderHomePage(){
       else if(d.status==='in_progress'){status='🔄 進行中';btnText='繼續'}
     }
     html+=`<div class="puzzle-card">
-      <div class="card-scene">${p.icon}</div>
+      <div class="card-scene" style="${p.thumbnail?`background:url('${p.thumbnail}') center/cover`:''}">${p.thumbnail?'':p.icon}</div>
       <div class="card-body">
         <div class="card-title">${p.name}</div>
         <div class="card-meta"><span class="diff-tag" style="background:${p.diffColor}">${p.difficulty}</span><span>${p.size}</span><span>${p.suspects}人</span></div>
