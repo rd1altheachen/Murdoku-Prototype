@@ -82,10 +82,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .home-filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:24px}
 .filter-pill{padding:6px 16px;border-radius:20px;border:1px solid #444;background:transparent;color:#EAEAEA;cursor:pointer;font-size:14px;transition:all .2s}
 .filter-pill.active{background:#53A8B6;border-color:#53A8B6;color:#fff}
-.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,280px));gap:16px}
 .puzzle-card{background:#16213E;border-radius:12px;overflow:hidden;transition:transform 0.2s;cursor:default}
 .puzzle-card:hover{transform:translateY(-4px)}
-.puzzle-card .card-scene{height:120px;background:linear-gradient(135deg,#16213E,#0F3460);display:flex;align-items:center;justify-content:center;font-size:48px}
+.puzzle-card .card-scene{width:100%;aspect-ratio:1;background:linear-gradient(135deg,#16213E,#0F3460) center/cover;display:flex;align-items:center;justify-content:center;font-size:48px;background-size:cover;background-position:center}
 .puzzle-card .card-body{padding:16px}
 .puzzle-card .card-title{font-size:16px;font-weight:600;margin-bottom:8px;color:#EAEAEA}
 .puzzle-card .card-meta{font-size:13px;color:#9E9E9E;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
