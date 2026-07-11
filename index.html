@@ -267,12 +267,10 @@ function getDecoration(r,c){return PUZZLE.decorations.find(d=>d.r===r&&d.c===c)}
 function getStandable(r,c){return PUZZLE.standable&&PUZZLE.standable.find(s=>s.r===r&&s.c===c)}
 function regionBorders(r,c){const gs=PUZZLE.gridSize;const reg=getRegion(r,c);let cls=[];if(r>0&&getRegion(r-1,c)!==reg)cls.push('border-top');if(r<gs-1&&getRegion(r+1,c)!==reg)cls.push('border-bottom');if(c>0&&getRegion(r,c-1)!==reg)cls.push('border-left');if(c<gs-1&&getRegion(r,c+1)!==reg)cls.push('border-right');return cls.join(' ')}
 function isRegionLabel(r,c){
-  // Dynamic: compute label position per region (widest row, middle col)
   if(!PUZZLE._labelCache){
     PUZZLE._labelCache={};
     const allRegions={...PUZZLE.regions};
     if(PUZZLE.defaultRegion){
-      // Compute default region cells
       const gs=PUZZLE.gridSize;const named=new Set();
       for(const reg of Object.values(PUZZLE.regions))for(const[rr,cc] of reg.cells)named.add(rr+','+cc);
       const defCells=[];for(let rr=0;rr<gs;rr++)for(let cc=0;cc<gs;cc++)if(!named.has(rr+','+cc))defCells.push([rr,cc]);
@@ -280,10 +278,9 @@ function isRegionLabel(r,c){
     }
     for(const[name,reg] of Object.entries(allRegions)){
       const rowMap={};for(const[rr,cc] of reg.cells){if(!rowMap[rr])rowMap[rr]=[];rowMap[rr].push(cc)}
-      let maxRow=0,maxCols=[];
-      for(const[rr,cols] of Object.entries(rowMap)){if(cols.length>maxCols.length){maxRow=+rr;maxCols=cols}}
-      maxCols.sort((a,b)=>a-b);
-      PUZZLE._labelCache[maxRow+','+maxCols[Math.floor(maxCols.length/2)]]=name;
+      const maxRow=Math.max(...Object.keys(rowMap).map(Number));
+      const cols=rowMap[maxRow].sort((a,b)=>a-b);
+      PUZZLE._labelCache[maxRow+','+cols[Math.floor(cols.length/2)]]=name;
     }
   }
   return PUZZLE._labelCache[r+','+c]||null;
