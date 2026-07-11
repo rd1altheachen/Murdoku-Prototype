@@ -187,8 +187,8 @@ const PUZZLE_3={
   blocked:[{r:4,c:6,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:6,c:1,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:7,c:3,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:9,c:0,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:4,c:8,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:5,c:0,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:8,c:1,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:9,c:2,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:2,c:7,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:7,c:1,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:5,c:2,name:"閘門",img:"assets/scene-amusement/item-staff-door.png"}],
   standable:[{r:2,c:5,name:"長椅",img:"assets/scene-amusement/item-bench.png"},{r:4,c:4,name:"長椅",img:"assets/scene-amusement/item-bench.png"},{r:8,c:6,name:"長椅",img:"assets/scene-amusement/item-bench.png"},{r:0,c:9,name:"摩天輪座位",img:"assets/scene-amusement/item-ferris-seat.png"}],
   suspects:[
-    {id:"V",name:"Victor",color:"#808080",img:"assets/avatars/suspect-male-05.png",clue:"在摩天輪區，在 Bob 的北邊（被害者）"},
-    {id:"B",name:"Bob",color:"#457B9D",img:"assets/avatars/suspect-male-01.png",clue:"在摩天輪區，跟摩天輪座位相鄰"},
+    {id:"V",name:"Victor",color:"#808080",img:"assets/avatars/suspect-male-05.png",clue:"在第 1 行，不在任何物品上面（被害者）"},
+    {id:"B",name:"Bob",color:"#457B9D",img:"assets/avatars/suspect-male-01.png",clue:"跟摩天輪座位相鄰"},
     {id:"A",name:"Alice",color:"#E63946",img:"assets/avatars/suspect-female-01.png",clue:"在美食街，跟一個垃圾桶相鄰"},
     {id:"C",name:"Carol",color:"#2A9D8F",img:"assets/avatars/suspect-female-02.png",clue:"在旋轉木馬區，跟一張長椅相鄰"},
     {id:"D",name:"Dave",color:"#E9C46A",img:"assets/avatars/suspect-male-02.png",clue:"在廣場，跟一棵樹相鄰"},
@@ -258,7 +258,7 @@ let PUZZLE=PUZZLE_1;
 let currentPuzzleId="apartment-medium-1";
 const TOTAL=()=>PUZZLE.suspects.length;
 
-let state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],startTime:Date.now(),solved:false};
+let state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],elapsed:0,resumeTime:Date.now(),solved:false};
 
 function ck(r,c){return`${r},${c}`}
 function getRegion(r,c){for(const[n,reg] of Object.entries(PUZZLE.regions)){if(reg.cells.some(([rr,cc])=>rr===r&&cc===c))return n}return PUZZLE.defaultRegion||null}
@@ -387,7 +387,7 @@ function submitAnswer(){
     else{if(entry)document.getElementById(`cell-${entry[0]}`).classList.add('error');allCorrect=false}
   }
   if(allCorrect){
-    state.solved=true;const elapsed=Math.floor((Date.now()-state.startTime)/1000);
+    state.solved=true;const elapsed=Math.floor(state.elapsed+(Date.now()-state.resumeTime)/1000);
     const prev=JSON.parse(localStorage.getItem('mrd_puzzle_'+currentPuzzleId)||'{}');
     const best=prev.bestTime?Math.min(prev.bestTime,elapsed):elapsed;
     localStorage.setItem('mrd_puzzle_'+currentPuzzleId,JSON.stringify({status:'completed',bestTime:best}));
@@ -400,12 +400,12 @@ function submitAnswer(){
 }
 function showHelp(){alert("【玩法】\n1. 點選左側嫌疑人\n2. 點格子 = 筆記（再點取消）\n3. 長按格子 = 放置\n4. ✖按鈕 = 標記排除模式\n5. 全部放完後按提交\n\n【規則】\n• 每行每列只能放一人\n• 灰點 = 已被佔的行/列\n• 紅框 = 行列衝突警告\n• 找出與 Victor 獨處同區域的兇手")}
 function confirmExit(){goHome()}
-function resetGame(){localStorage.removeItem('murdoku_save_'+currentPuzzleId);state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],startTime:Date.now(),solved:false};document.getElementById('overlay').classList.remove('show');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('error','correct','row-conflict'));render()}
+function resetGame(){localStorage.removeItem('murdoku_save_'+currentPuzzleId);state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],elapsed:0,resumeTime:Date.now(),solved:false};document.getElementById('overlay').classList.remove('show');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('error','correct','row-conflict'));render()}
 
-setInterval(()=>{if(state.solved)return;const e=Math.floor((Date.now()-state.startTime)/1000);document.getElementById('timer').textContent=`${String(Math.floor(e/60)).padStart(2,'0')}:${String(e%60).padStart(2,'0')}`},1000);
-function saveState(){localStorage.setItem('murdoku_save_'+currentPuzzleId,JSON.stringify({p:state.placements,n:state.notes,x:state.xMarks,t:state.startTime,s:state.solved}));if(!state.solved&&(Object.keys(state.placements).length>0||Object.keys(state.notes).length>0))localStorage.setItem('mrd_puzzle_'+currentPuzzleId,JSON.stringify({status:'in_progress'}))}
-function loadState(){const raw=localStorage.getItem('murdoku_save_'+currentPuzzleId);if(raw){try{const d=JSON.parse(raw);state.placements=d.p||{};state.notes=d.n||{};state.xMarks=d.x||{};state.startTime=d.t||Date.now();state.solved=d.s||false}catch(e){}}}
-loadState();render();
+setInterval(()=>{if(state.solved)return;const e=Math.floor(state.elapsed+(Date.now()-state.resumeTime)/1000);document.getElementById('timer').textContent=`${String(Math.floor(e/60)).padStart(2,'0')}:${String(e%60).padStart(2,'0')}`},1000);
+function saveState(){const elapsed=state.elapsed+Math.floor((Date.now()-state.resumeTime)/1000);localStorage.setItem('murdoku_save_'+currentPuzzleId,JSON.stringify({p:state.placements,n:state.notes,x:state.xMarks,elapsed:elapsed,s:state.solved}));if(!state.solved&&(Object.keys(state.placements).length>0||Object.keys(state.notes).length>0))localStorage.setItem('mrd_puzzle_'+currentPuzzleId,JSON.stringify({status:'in_progress'}))}
+function loadState(){const raw=localStorage.getItem('murdoku_save_'+currentPuzzleId);if(raw){try{const d=JSON.parse(raw);state.placements=d.p||{};state.notes=d.n||{};state.xMarks=d.x||{};state.elapsed=d.elapsed||0;state.resumeTime=Date.now();state.solved=d.s||false}catch(e){}}}
+// state loaded by startPuzzle or on homepage
 
 // Tooltip overflow fix
 document.addEventListener('mouseover',function(e){
@@ -468,15 +468,17 @@ function startPuzzle(id){
   if(ALL_PUZZLES[id]){PUZZLE=ALL_PUZZLES[id];currentPuzzleId=id;}
   document.getElementById('home-page').style.display='none';
   document.getElementById('game-page').style.display='';
-  // Reset state for new puzzle
+  localStorage.setItem('mrd_current_puzzle',id);
   const save=localStorage.getItem('murdoku_save_'+id);
-  if(save){const d=JSON.parse(save);state.placements=d.p||{};state.notes=d.n||{};state.xMarks=d.x||{};state.startTime=d.t||Date.now();state.solved=d.s||false;}
-  else{state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],startTime:Date.now(),solved:false};}
+  if(save){const d=JSON.parse(save);state.placements=d.p||{};state.notes=d.n||{};state.xMarks=d.x||{};state.elapsed=d.elapsed||0;state.resumeTime=Date.now();state.solved=d.s||false;}
+  else{state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],elapsed:0,resumeTime:Date.now(),solved:false};}
   render();
 }
 
 function goHome(){
+  state.elapsed=state.elapsed+Math.floor((Date.now()-state.resumeTime)/1000);state.resumeTime=Date.now();
   saveState();
+  localStorage.removeItem('mrd_current_puzzle');
   document.getElementById('game-page').style.display='none';
   document.getElementById('home-page').style.display='';
   renderHomePage();
@@ -488,6 +490,8 @@ function goNext(){
 }
 
 renderHomePage();
+const _resumeId=localStorage.getItem('mrd_current_puzzle');
+if(_resumeId&&ALL_PUZZLES[_resumeId]){startPuzzle(_resumeId);}
 </script>
 </body>
 </html>
