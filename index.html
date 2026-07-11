@@ -270,10 +270,10 @@ function isRegionLabel(r,c){for(const[n,pos] of Object.entries(PUZZLE.regionLabe
 
 // Auto-X: mark row/col when someone is placed + clear notes
 function computeAutoX(){
-  const ax={};
+  const ax={};const gs=PUZZLE.gridSize;
   for(const[key,sid] of Object.entries(state.placements)){
     const[r,c]=key.split(',').map(Number);
-    for(let i=0;i<6;i++){
+    for(let i=0;i<gs;i++){
       const rk=ck(r,i),ck2=ck(i,c);
       if(rk!==key&&!state.placements[rk]){ax[rk]=true;if(state.notes[rk])state.notes[rk]=[]}
       if(ck2!==key&&!state.placements[ck2]){ax[ck2]=true;if(state.notes[ck2])state.notes[ck2]=[]}
@@ -297,7 +297,8 @@ function getConflicts(){
 
 function render(){computeAutoX();renderSuspects();renderBoard();updateSubmit()}
 function renderSuspects(){
-  document.getElementById('suspects').innerHTML=PUZZLE.suspects.map(s=>{
+  const sorted=[...PUZZLE.suspects].sort((a,b)=>{if(a.id==='V')return 1;if(b.id==='V')return -1;return a.id.localeCompare(b.id)});
+  document.getElementById('suspects').innerHTML=sorted.map(s=>{
     const placed=Object.values(state.placements).includes(s.id);
     const sel=state.selected===s.id;
     return`<div class="suspect-row ${sel?'selected':''} ${placed?'placed':''}" onclick="selectSuspect('${s.id}')">
