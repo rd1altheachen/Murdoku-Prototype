@@ -117,7 +117,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
   <div class="left-panel">
     <div class="logo">🔍 Murdoku 推理謎盤</div>
     <div class="timer" id="timer">00:00</div>
-    <div class="puzzle-title">珠寶失竊案（困難 6×6）</div>
+    <div class="puzzle-title" id="puzzle-title"></div>
     <div class="general-clue">📋 規則：<br>• 每<span class="keyword">行<span class="kw-tooltip">一橫排格子</span></span>只能放一人<br>• 每<span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>只能放一人<br>• 找出與 Victor 獨處在同一區域的兇手<br><small>操作：點選人物→點格筆記 / 長按格放置</small></div>
     <div class="section-title">嫌疑人與線索</div>
     <div class="suspects-list" id="suspects"></div>
@@ -486,6 +486,8 @@ function startPuzzle(id){
   if(ALL_PUZZLES[id]){PUZZLE=ALL_PUZZLES[id];PUZZLE._labelCache=null;currentPuzzleId=id;}
   document.getElementById('home-page').style.display='none';
   document.getElementById('game-page').style.display='';
+  const meta=PUZZLES.find(p=>p.id===id);
+  document.getElementById('puzzle-title').textContent=meta?`${meta.name}（${meta.difficulty} ${meta.size}）`:'';
   localStorage.setItem('mrd_current_puzzle',id);
   const save=localStorage.getItem('murdoku_save_'+id);
   if(save){const d=JSON.parse(save);state.placements=d.p||{};state.notes=d.n||{};state.xMarks=d.x||{};state.elapsed=d.elapsed||0;state.resumeTime=Date.now();state.solved=d.s||false;}
