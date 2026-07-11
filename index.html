@@ -184,18 +184,19 @@ const PUZZLE_3={
   },
   regionLabels:{後台:[0,0],入口通道:[1,1],美食街:[1,5],旋轉木馬:[3,4],摩天輪:[0,8],休息區:[8,5],廣場:[4,8]},
   decorations:[],
-  blocked:[{r:0,c:3,name:"路燈"},{r:0,c:6,name:"路燈"},{r:1,c:4,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:1,c:6,name:"爆米花車",img:"assets/scene-amusement/item-popcorn-cart.png"},{r:2,c:2,name:"路燈"},{r:2,c:3,name:"路燈"},{r:3,c:1,name:"攤位",img:"assets/scene-amusement/item-stall.png"},{r:3,c:5,name:"旋轉木馬",img:"assets/scene-amusement/item-carousel.png"},{r:3,c:7,name:"攤位",img:"assets/scene-amusement/item-stall.png"},{r:4,c:3,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:4,c:6,name:"摩天輪柱",img:"assets/scene-amusement/item-ferris-wheel-base.png"},{r:5,c:6,name:"攤位",img:"assets/scene-amusement/item-stall.png"},{r:5,c:8,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:6,c:3,name:"路燈"},{r:7,c:5,name:"氣球攤",img:"assets/scene-amusement/item-balloon-stand.png"},{r:7,c:8,name:"員工入口",img:"assets/scene-amusement/item-staff-door.png"},{r:8,c:3,name:"路燈"},{r:9,c:5,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:9,c:8,name:"氣球攤",img:"assets/scene-amusement/item-balloon-stand.png"}],
+  blocked:[{r:4,c:6,name:"樹"},{r:6,c:1,name:"樹"},{r:7,c:3,name:"樹"},{r:9,c:0,name:"樹"},{r:4,c:8,name:"路燈"},{r:5,c:0,name:"路燈"},{r:8,c:1,name:"路燈"},{r:9,c:2,name:"路燈"},{r:2,c:7,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:7,c:1,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:5,c:2,name:"閘門",img:"assets/scene-amusement/item-staff-door.png"}],
+  standable:[{r:2,c:5,name:"長椅"},{r:4,c:4,name:"長椅"},{r:8,c:6,name:"長椅"},{r:0,c:9,name:"摩天輪座位",img:"assets/scene-amusement/item-ferris-wheel-base.png"}],
   suspects:[
-    {id:"V",name:"Victor",color:"#808080",img:"assets/avatars/suspect-male-05.png",clue:"在摩天輪區（被害者）"},
-    {id:"B",name:"Bob",color:"#457B9D",img:"assets/avatars/suspect-male-01.png",clue:"在摩天輪區，在 Victor 的東邊"},
-    {id:"A",name:"Alice",color:"#E63946",img:"assets/avatars/suspect-female-01.png",clue:"在美食街，跟爆米花車相鄰"},
-    {id:"C",name:"Carol",color:"#2A9D8F",img:"assets/avatars/suspect-female-02.png",clue:"在旋轉木馬區"},
-    {id:"D",name:"Dave",color:"#E9C46A",img:"assets/avatars/suspect-male-02.png",clue:"在廣場，跟攤位相鄰"},
-    {id:"E",name:"Eve",color:"#8338EC",img:"assets/avatars/suspect-female-03.png",clue:"在入口通道的最南端"},
-    {id:"F",name:"Frank",color:"#F77F00",img:"assets/avatars/suspect-male-03.png",clue:"在第 1 列"},
-    {id:"G",name:"Grace",color:"#06D6A0",img:"assets/avatars/suspect-female-04.png",clue:"在廣場，在 Frank 的南邊且 Henry 的北邊"},
+    {id:"V",name:"Victor",color:"#808080",img:"assets/avatars/suspect-male-05.png",clue:"在摩天輪區，在 Bob 的北邊（被害者）"},
+    {id:"B",name:"Bob",color:"#457B9D",img:"assets/avatars/suspect-male-01.png",clue:"在摩天輪區，跟摩天輪座位相鄰"},
+    {id:"A",name:"Alice",color:"#E63946",img:"assets/avatars/suspect-female-01.png",clue:"在美食街，跟一個垃圾桶相鄰"},
+    {id:"C",name:"Carol",color:"#2A9D8F",img:"assets/avatars/suspect-female-02.png",clue:"在旋轉木馬區，跟一張長椅相鄰"},
+    {id:"D",name:"Dave",color:"#E9C46A",img:"assets/avatars/suspect-male-02.png",clue:"在廣場，跟一棵樹相鄰"},
+    {id:"E",name:"Eve",color:"#8338EC",img:"assets/avatars/suspect-female-03.png",clue:"在入口通道，跟閘門相鄰"},
+    {id:"F",name:"Frank",color:"#F77F00",img:"assets/avatars/suspect-male-03.png",clue:"跟一棵樹相鄰，靠著棋盤西側牆壁"},
+    {id:"G",name:"Grace",color:"#06D6A0",img:"assets/avatars/suspect-female-04.png",clue:"在廣場，跟一個垃圾桶相鄰"},
     {id:"H",name:"Henry",color:"#118AB2",img:"assets/avatars/suspect-male-04.png",clue:"在休息區"},
-    {id:"I",name:"Iris",color:"#FF006E",img:"assets/avatars/suspect-female-05.png",clue:"在廣場，在棋盤最下面一行，在第 2 列"}
+    {id:"I",name:"Iris",color:"#FF006E",img:"assets/avatars/suspect-female-05.png",clue:"在廣場，跟一盞路燈相鄰，在棋盤最下面一行"}
   ],
   solution:{V:[0,8],B:[1,9],A:[2,6],C:[3,4],D:[4,7],E:[5,3],F:[6,0],G:[7,2],H:[8,5],I:[9,1]},
   murderer:"B",murdererName:"Bob",
@@ -263,6 +264,7 @@ function ck(r,c){return`${r},${c}`}
 function getRegion(r,c){for(const[n,reg] of Object.entries(PUZZLE.regions)){if(reg.cells.some(([rr,cc])=>rr===r&&cc===c))return n}return PUZZLE.defaultRegion||null}
 function isBlocked(r,c){return PUZZLE.blocked.some(b=>b.r===r&&b.c===c)}
 function getDecoration(r,c){return PUZZLE.decorations.find(d=>d.r===r&&d.c===c)}
+function getStandable(r,c){return PUZZLE.standable&&PUZZLE.standable.find(s=>s.r===r&&s.c===c)}
 function regionBorders(r,c){const gs=PUZZLE.gridSize;const reg=getRegion(r,c);let cls=[];if(r>0&&getRegion(r-1,c)!==reg)cls.push('border-top');if(r<gs-1&&getRegion(r+1,c)!==reg)cls.push('border-bottom');if(c>0&&getRegion(r,c-1)!==reg)cls.push('border-left');if(c<gs-1&&getRegion(r,c+1)!==reg)cls.push('border-right');return cls.join(' ')}
 function isRegionLabel(r,c){for(const[n,pos] of Object.entries(PUZZLE.regionLabels)){if(pos[0]===r&&pos[1]===c)return n}return null}
 
@@ -319,6 +321,7 @@ function renderBoard(){
     let content='';
     if(regLabel)content+=`<div class="region-tag">${regLabel}</div>`;
     if(deco)content+=`<div class="decoration" data-tip="${deco.name}">${deco.icon}</div>`;
+    const stand=getStandable(r,c);if(stand)content+=`<div class="decoration" data-tip="${stand.name}" style="opacity:0.5">${stand.img?`<img src="${stand.img}">`:''}</div>`;
     if(blocked){const b=PUZZLE.blocked.find(b=>b.r===r&&b.c===c);if(b.img){content+=`<div class="decoration" data-tip="${b.name||''}">${b.wide?`<img src="${b.img}" style="width:160%;height:80%;position:absolute;left:10%">`:`<img src="${b.img}">`}</div>`}else if(b.img===null){/* blocked but no image */}else{content+=`<div class="decoration" data-tip="${b.name||''}">${b.icon||''}</div>`}}
     if(hasX)content+=`<div class="x-mark">✕</div>`;
     else if(hasAutoX&&!blocked)content+=`<div class="auto-x">✕</div>`;
