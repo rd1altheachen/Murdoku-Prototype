@@ -19,7 +19,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .suspect-row{background:#0F3460;border:2px solid transparent;border-radius:6px;padding:8px;cursor:pointer;transition:all .2s;user-select:none;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px}
 .suspect-row:hover{border-color:#53A8B6}
 .suspect-row.selected{border-color:#FFC107;background:#1a2a4e;box-shadow:0 0 8px rgba(255,193,7,.3)}
-.suspect-row.placed{opacity:.4}
+.suspect-row.placed{opacity:.4;pointer-events:none;cursor:not-allowed}
 .suspect-row .avatar{width:80px;height:80px;min-width:80px;border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .suspect-row .info{text-align:center}
 .suspect-row .name{font-size:16px;font-weight:600;margin-bottom:3px}
@@ -352,7 +352,7 @@ function renderBoard(){
   board.innerHTML=html;
 }
 
-function selectSuspect(id){if(state.solved)return;if(state.xMode){state.xMode=false;document.getElementById('btn-x').classList.remove('active')}if(state.eraserMode){state.eraserMode=false;document.getElementById('btn-eraser').classList.remove('active')}state.selected=state.selected===id?null:id;render()}
+function selectSuspect(id){if(state.solved)return;if(Object.values(state.placements).includes(id))return;if(state.xMode){state.xMode=false;document.getElementById('btn-x').classList.remove('active')}if(state.eraserMode){state.eraserMode=false;document.getElementById('btn-eraser').classList.remove('active')}state.selected=state.selected===id?null:id;render()}
 function toggleXMode(){if(state.solved)return;state.xMode=!state.xMode;if(state.xMode){state.selected=null;state.eraserMode=false;document.getElementById('btn-eraser').classList.remove('active')}document.getElementById('btn-x').classList.toggle('active',state.xMode);render()}
 function toggleEraserMode(){if(state.solved)return;state.eraserMode=!state.eraserMode;if(state.eraserMode){state.selected=null;state.xMode=false;document.getElementById('btn-x').classList.remove('active')}document.getElementById('btn-eraser').classList.toggle('active',state.eraserMode);render()}
 
@@ -379,7 +379,7 @@ function placeSuspect(r,c){
     if(idx>=0)state.notes[k].splice(idx,1);
   }
   state.placements[key]=state.selected;state.notes[key]=[];delete state.xMarks[key];
-  render();saveState();
+  state.selected=null;render();saveState();
 }
 
 function undo(){if(state.solved||!state.history.length)return;const prev=state.history.pop();state.placements=prev.p;state.notes=prev.n;state.xMarks=prev.x;render();saveState()}
