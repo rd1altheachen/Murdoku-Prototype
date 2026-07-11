@@ -27,7 +27,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .suspect-row.selected .clue{color:#FFC107}
 .keyword{border-bottom:1px dashed #FFC107;cursor:help;position:relative}
 .keyword:hover .kw-tooltip{display:block}
-.kw-tooltip{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #FFC107;border-radius:6px;padding:6px 10px;font-size:13px;color:#FFC107;min-width:140px;max-width:220px;word-wrap:break-word;white-space:normal;z-index:10;pointer-events:none;text-align:center;margin-bottom:4px}
+.kw-tooltip{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #FFC107;border-radius:6px;padding:6px 10px;font-size:13px;color:#FFC107;min-width:140px;max-width:220px;word-wrap:break-word;white-space:normal;z-index:9999;pointer-events:none;text-align:center;margin-bottom:4px}
 .center-panel{display:flex;align-items:center;justify-content:center;padding:16px;background:#1A1A2E;position:relative;overflow:auto}
 .board{display:grid;gap:0;border:3px solid #666}
 .cell{display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .15s;border:1px solid #333;user-select:none;background-size:cover;background-position:center}
@@ -35,10 +35,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .cell:hover{filter:brightness(1.2)}
 /* region backgrounds set dynamically via regionTerrain */
 .cell.blocked{cursor:not-allowed}
-.cell.blocked:hover{filter:none}
+.cell.blocked:hover{filter:none;outline:3px solid #E94560;outline-offset:-3px}
 .cell .decoration{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3;pointer-events:auto;cursor:help;font-size:76px;opacity:1}
 .cell .decoration img{width:80%;height:80%;object-fit:contain;opacity:0.9}
-.cell .decoration::after{content:attr(data-tip);display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #FFC107;border-radius:4px;padding:3px 8px;font-size:12px;color:#FFC107;white-space:nowrap;z-index:20;pointer-events:none}
+.cell .decoration::after{content:attr(data-tip);display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #FFC107;border-radius:4px;padding:3px 8px;font-size:12px;color:#FFC107;white-space:nowrap;z-index:9999;pointer-events:none}
 .cell .decoration:hover::after{display:block}
 .cell .region-tag{position:absolute;bottom:4px;left:4px;font-size:14px;font-weight:700;color:#fff;z-index:6;background:rgba(0,0,0,0.5);padding:1px 6px;border-radius:4px;text-shadow:0 1px 3px rgba(0,0,0,0.8);white-space:nowrap;overflow:visible}
 .cell .placed-suspect{font-size:28px;font-weight:700}
@@ -266,7 +266,28 @@ function isBlocked(r,c){return PUZZLE.blocked.some(b=>b.r===r&&b.c===c)}
 function getDecoration(r,c){return PUZZLE.decorations.find(d=>d.r===r&&d.c===c)}
 function getStandable(r,c){return PUZZLE.standable&&PUZZLE.standable.find(s=>s.r===r&&s.c===c)}
 function regionBorders(r,c){const gs=PUZZLE.gridSize;const reg=getRegion(r,c);let cls=[];if(r>0&&getRegion(r-1,c)!==reg)cls.push('border-top');if(r<gs-1&&getRegion(r+1,c)!==reg)cls.push('border-bottom');if(c>0&&getRegion(r,c-1)!==reg)cls.push('border-left');if(c<gs-1&&getRegion(r,c+1)!==reg)cls.push('border-right');return cls.join(' ')}
-function isRegionLabel(r,c){for(const[n,pos] of Object.entries(PUZZLE.regionLabels)){if(pos[0]===r&&pos[1]===c)return n}return null}
+function isRegionLabel(r,c){
+  // Dynamic: compute label position per region (widest row, middle col)
+  if(!PUZZLE._labelCache){
+    PUZZLE._labelCache={};
+    const allRegions={...PUZZLE.regions};
+    if(PUZZLE.defaultRegion){
+      // Compute default region cells
+      const gs=PUZZLE.gridSize;const named=new Set();
+      for(const reg of Object.values(PUZZLE.regions))for(const[rr,cc] of reg.cells)named.add(rr+','+cc);
+      const defCells=[];for(let rr=0;rr<gs;rr++)for(let cc=0;cc<gs;cc++)if(!named.has(rr+','+cc))defCells.push([rr,cc]);
+      allRegions[PUZZLE.defaultRegion]={cells:defCells};
+    }
+    for(const[name,reg] of Object.entries(allRegions)){
+      const rowMap={};for(const[rr,cc] of reg.cells){if(!rowMap[rr])rowMap[rr]=[];rowMap[rr].push(cc)}
+      let maxRow=0,maxCols=[];
+      for(const[rr,cols] of Object.entries(rowMap)){if(cols.length>maxCols.length){maxRow=+rr;maxCols=cols}}
+      maxCols.sort((a,b)=>a-b);
+      PUZZLE._labelCache[maxRow+','+maxCols[Math.floor(maxCols.length/2)]]=name;
+    }
+  }
+  return PUZZLE._labelCache[r+','+c]||null;
+}
 
 // Auto-X: mark row/col when someone is placed + clear notes
 function computeAutoX(){
@@ -465,7 +486,7 @@ function filterDiff(diff){
 }
 
 function startPuzzle(id){
-  if(ALL_PUZZLES[id]){PUZZLE=ALL_PUZZLES[id];currentPuzzleId=id;}
+  if(ALL_PUZZLES[id]){PUZZLE=ALL_PUZZLES[id];PUZZLE._labelCache=null;currentPuzzleId=id;}
   document.getElementById('home-page').style.display='none';
   document.getElementById('game-page').style.display='';
   localStorage.setItem('mrd_current_puzzle',id);
