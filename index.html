@@ -468,7 +468,7 @@ function renderHomePage(){
         <div class="card-title">${p.name}</div>
         <div class="card-meta"><span class="diff-tag" style="background:${p.diffColor}">${p.difficulty}</span><span>${p.size}</span><span>${p.suspects}人</span></div>
         <div class="card-status">${status}${bestTime}</div>
-        <button class="card-btn" onclick="startPuzzle('${p.id}')">${btnText}</button>
+        <button class="card-btn" onclick="${btnText==='重玩'?`resetAndStart('${p.id}')`:`startPuzzle('${p.id}')`}">${btnText}</button>
       </div>
     </div>`;
   });
@@ -494,6 +494,11 @@ function startPuzzle(id){
   if(save){const d=JSON.parse(save);state={selected:null,xMode:false,eraserMode:false,placements:d.p||{},notes:d.n||{},xMarks:d.x||{},autoX:{},history:[],elapsed:d.elapsed||0,resumeTime:Date.now(),solved:d.s||false};}
   else{state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],elapsed:0,resumeTime:Date.now(),solved:false};}
   render();
+}
+function resetAndStart(id){
+  localStorage.removeItem('murdoku_save_'+id);
+  localStorage.removeItem('mrd_puzzle_'+id);
+  startPuzzle(id);
 }
 
 function goHome(){
