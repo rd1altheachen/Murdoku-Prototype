@@ -486,11 +486,12 @@ function startPuzzle(id){
   if(ALL_PUZZLES[id]){PUZZLE=ALL_PUZZLES[id];PUZZLE._labelCache=null;currentPuzzleId=id;}
   document.getElementById('home-page').style.display='none';
   document.getElementById('game-page').style.display='';
+  document.getElementById('overlay').classList.remove('show');
   const meta=PUZZLES.find(p=>p.id===id);
   document.getElementById('puzzle-title').textContent=meta?`${meta.name}（${meta.difficulty} ${meta.size}）`:'';
   localStorage.setItem('mrd_current_puzzle',id);
   const save=localStorage.getItem('murdoku_save_'+id);
-  if(save){const d=JSON.parse(save);state.placements=d.p||{};state.notes=d.n||{};state.xMarks=d.x||{};state.elapsed=d.elapsed||0;state.resumeTime=Date.now();state.solved=d.s||false;}
+  if(save){const d=JSON.parse(save);state={selected:null,xMode:false,eraserMode:false,placements:d.p||{},notes:d.n||{},xMarks:d.x||{},autoX:{},history:[],elapsed:d.elapsed||0,resumeTime:Date.now(),solved:d.s||false};}
   else{state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],elapsed:0,resumeTime:Date.now(),solved:false};}
   render();
 }
