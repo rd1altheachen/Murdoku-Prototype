@@ -341,7 +341,7 @@ function renderBoard(){
     if(state.selected&&!blocked&&!placed){const sel=PUZZLE.suspects.find(s=>s.id===state.selected);if(sel&&sel.candidates&&sel.candidates.some(([cr,cc])=>cr===r&&cc===c))content+=`<div class="candidate-highlight"></div>`}
     if(regLabel)content+=`<div class="region-tag">${regLabel}</div>`;
     if(deco)content+=`<div class="decoration" data-tip="${deco.name}">${deco.icon}</div>`;
-    const stand=getStandable(r,c);if(stand)content+=`<div class="decoration" data-tip="${stand.name}" style="opacity:0.5">${stand.img?`<img src="${stand.img}">`:''}</div>`;
+    const stand=getStandable(r,c);if(stand)content+=`<div class="decoration" data-tip="${stand.name}" style="opacity:1">${stand.img?`<img src="${stand.img}">`:''}</div>`;
     if(blocked){const b=PUZZLE.blocked.find(b=>b.r===r&&b.c===c);if(b.img){content+=`<div class="decoration" data-tip="${b.name||''}">${b.wide?`<img src="${b.img}" style="width:160%;height:80%;position:absolute;left:10%">`:`<img src="${b.img}">`}</div>`}else if(b.img===null){/* blocked but no image */}else{content+=`<div class="decoration" data-tip="${b.name||''}">${b.icon||''}</div>`}}
     if(hasX)content+=`<div class="x-mark">✕</div>`;
     else if(hasAutoX&&!blocked)content+=`<div class="auto-x">✕</div>`;
@@ -419,7 +419,7 @@ function submitAnswer(){
 }
 function showHelp(){alert("【玩法】\n1. 點選左側嫌疑人\n2. 點格子 = 筆記（再點取消）\n3. 長按格子 = 放置\n4. ✖按鈕 = 標記排除模式\n5. 全部放完後按提交\n\n【規則】\n• 每行每列只能放一人\n• 灰點 = 已被佔的行/列\n• 紅框 = 行列衝突警告\n• 找出與 Victor 獨處同區域的兇手")}
 function confirmExit(){goHome()}
-function resetGame(){localStorage.removeItem('murdoku_save_'+currentPuzzleId);localStorage.removeItem('mrd_puzzle_'+currentPuzzleId);state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],elapsed:0,resumeTime:Date.now(),solved:false};document.getElementById('overlay').classList.remove('show');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('error','correct','row-conflict'));render();saveState()}
+function resetGame(){localStorage.removeItem('murdoku_save_'+currentPuzzleId);state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],elapsed:0,resumeTime:Date.now(),solved:false};document.getElementById('overlay').classList.remove('show');document.querySelectorAll('.cell').forEach(c=>c.classList.remove('error','correct','row-conflict'));render();saveState()}
 
 setInterval(()=>{if(state.solved)return;const e=Math.floor(state.elapsed+(Date.now()-state.resumeTime)/1000);document.getElementById('timer').textContent=`${String(Math.floor(e/60)).padStart(2,'0')}:${String(e%60).padStart(2,'0')}`},1000);
 function saveState(){const elapsed=state.elapsed+Math.floor((Date.now()-state.resumeTime)/1000);localStorage.setItem('murdoku_save_'+currentPuzzleId,JSON.stringify({p:state.placements,n:state.notes,x:state.xMarks,elapsed:elapsed,s:state.solved}));if(!state.solved&&(Object.keys(state.placements).length>0||Object.keys(state.notes).length>0))localStorage.setItem('mrd_puzzle_'+currentPuzzleId,JSON.stringify({status:'in_progress'}))}
@@ -498,7 +498,6 @@ function startPuzzle(id){
 }
 function resetAndStart(id){
   localStorage.removeItem('murdoku_save_'+id);
-  localStorage.removeItem('mrd_puzzle_'+id);
   startPuzzle(id);
 }
 
