@@ -74,7 +74,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 .overlay .time-display{font-size:16px;color:#FFC107;margin-bottom:20px}
 .overlay button{background:#53A8B6;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:14px;cursor:pointer}
 .error-toast{position:fixed;top:20px;right:20px;background:#E94560;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;display:none;z-index:50}
-.home-container{max-width:960px;margin:0 auto;padding:24px;min-height:100vh}
+.home-container{max-width:960px;margin:0 auto;padding:24px;min-height:100vh;position:relative}
 .home-header{text-align:center;margin-bottom:24px}
 .home-logo{font-size:32px;font-weight:700;color:#E94560}
 .home-subtitle{color:#9E9E9E;font-size:16px;margin-top:8px}
@@ -99,6 +99,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#1A1A2E;color:#EAEAEA;heig
 <body>
 <div id="home-page">
   <div class="home-container">
+    <button onclick="toggleDevMode()" style="position:absolute;top:12px;right:12px;background:transparent;border:none;color:#666;font-size:20px;cursor:pointer">🔧</button>
     <div class="home-header">
       <div class="home-logo">🔍 Murdoku 推理謎盤</div>
       <p class="home-subtitle">閱讀線索，用邏輯推理找出兇手</p>
@@ -454,8 +455,10 @@ let currentDiffFilter='all';
 function renderHomePage(){
   const grid=document.getElementById('puzzle-grid');
   if(!grid)return;
+  const devUnlocked=localStorage.getItem('mrd_dev_unlocked')==='true';
   let html='';
   PUZZLES.forEach(p=>{
+    if(p.dev&&!devUnlocked)return;
     if(currentDiffFilter!=='all'&&p.difficulty!==currentDiffFilter)return;
     const save=localStorage.getItem('mrd_puzzle_'+p.id);
     let status='未開始',btnText='開始',bestTime='';
@@ -477,6 +480,8 @@ function renderHomePage(){
   });
   grid.innerHTML=html;
 }
+
+function toggleDevMode(){const u=localStorage.getItem('mrd_dev_unlocked');if(u==='true'){if(confirm('隱藏開發中謎題？')){localStorage.removeItem('mrd_dev_unlocked');renderHomePage()}}else{const pwd=prompt('輸入開發者密碼：');if(pwd==='0517'){localStorage.setItem('mrd_dev_unlocked','true');renderHomePage()}else if(pwd!==null){alert('密碼錯誤')}}}
 
 function filterDiff(diff){
   currentDiffFilter=diff;
