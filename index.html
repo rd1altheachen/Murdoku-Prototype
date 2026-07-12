@@ -258,7 +258,7 @@ let PUZZLE=PUZZLE_1;
 let currentPuzzleId="apartment-medium-1";
 const TOTAL=()=>PUZZLE.suspects.length;
 
-let state={selected:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],elapsed:0,resumeTime:Date.now(),solved:false};
+let state={selected:null,hovered:null,xMode:false,eraserMode:false,placements:{},notes:{},xMarks:{},autoX:{},history:[],elapsed:0,resumeTime:Date.now(),solved:false};
 
 function ck(r,c){return`${r},${c}`}
 function getRegion(r,c){for(const[n,reg] of Object.entries(PUZZLE.regions)){if(reg.cells.some(([rr,cc])=>rr===r&&cc===c))return n}return PUZZLE.defaultRegion||null}
@@ -319,7 +319,7 @@ function renderSuspects(){
   document.getElementById('suspects').innerHTML=sorted.map(s=>{
     const placed=Object.values(state.placements).includes(s.id);
     const sel=state.selected===s.id;
-    return`<div class="suspect-row ${sel?'selected':''} ${placed?'placed':''}" onclick="selectSuspect('${s.id}')">
+    return`<div class="suspect-row ${sel?'selected':''} ${placed?'placed':''}" onmouseenter="hoverSuspect('${s.id}')" onmouseleave="unhoverSuspect()" onclick="selectSuspect('${s.id}')">
       <div class="avatar"><img src="${s.img}" style="width:100%;height:100%;object-fit:cover;border-radius:4px"></div>
       <div class="info"><div class="name">${s.name}</div><div class="clue">${s.clue}</div></div></div>`;
   }).join('');
@@ -338,7 +338,7 @@ function renderBoard(){
     const conflict=conflicts.has(key)?'row-conflict':'';
     const regLabel=isRegionLabel(r,c);
     let content='';
-    if(state.selected&&!blocked&&!placed){const sel=PUZZLE.suspects.find(s=>s.id===state.selected);if(sel&&sel.candidates&&sel.candidates.some(([cr,cc])=>cr===r&&cc===c))content+=`<div class="candidate-highlight"></div>`}
+    if((state.selected||state.hovered)&&!blocked&&!placed){const hid=state.selected||state.hovered;const sel=PUZZLE.suspects.find(s=>s.id===hid);if(sel&&sel.candidates&&sel.candidates.some(([cr,cc])=>cr===r&&cc===c))content+=`<div class="candidate-highlight"></div>`}
     if(regLabel)content+=`<div class="region-tag">${regLabel}</div>`;
     if(deco)content+=`<div class="decoration" data-tip="${deco.name}">${deco.icon}</div>`;
     const stand=getStandable(r,c);if(stand)content+=`<div class="decoration" data-tip="${stand.name}" style="opacity:1">${stand.img?`<img src="${stand.img}">`:''}</div>`;
@@ -353,7 +353,9 @@ function renderBoard(){
   board.innerHTML=html;
 }
 
-function selectSuspect(id){if(state.solved)return;if(Object.values(state.placements).includes(id))return;if(state.xMode){state.xMode=false;document.getElementById('btn-x').classList.remove('active')}if(state.eraserMode){state.eraserMode=false;document.getElementById('btn-eraser').classList.remove('active')}state.selected=state.selected===id?null:id;render()}
+function selectSuspect(id){if(state.solved)return;if(Object.values(state.placements).includes(id))return;if(state.xMode){state.xMode=false;document.getElementById('btn-x').classList.remove('active')}if(state.eraserMode){state.eraserMode=false;document.getElementById('btn-eraser').classList.remove('active')}state.selected=state.selected===id?null:id;state.hovered=null;render()}
+function hoverSuspect(id){if(state.selected)return;if(Object.values(state.placements).includes(id))return;state.hovered=id;renderBoard()}
+function unhoverSuspect(){if(state.hovered){state.hovered=null;renderBoard()}}
 function toggleXMode(){if(state.solved)return;state.xMode=!state.xMode;if(state.xMode){state.selected=null;state.eraserMode=false;document.getElementById('btn-eraser').classList.remove('active')}document.getElementById('btn-x').classList.toggle('active',state.xMode);render()}
 function toggleEraserMode(){if(state.solved)return;state.eraserMode=!state.eraserMode;if(state.eraserMode){state.selected=null;state.xMode=false;document.getElementById('btn-x').classList.remove('active')}document.getElementById('btn-eraser').classList.toggle('active',state.eraserMode);render()}
 
