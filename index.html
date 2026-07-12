@@ -175,34 +175,34 @@ function makeRegionCells(rs,re,cs,ce){const c=[];for(let r=rs;r<=re;r++)for(let 
 const PUZZLE_3={
   id:"park-hard-3",gridSize:10,
   regions:{
-    '後台':{cells:[[0,0],[0,1],[0,2],[1,0],[2,0],[6,8],[6,9],[7,7],[7,8],[7,9],[8,6],[8,7],[8,8],[8,9],[9,6],[9,7],[9,8],[9,9]]},
-    '售票處':{cells:[[1,1],[1,2],[2,1]]},
+    '售票處':{cells:[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1]]},
     '美食':{cells:[[0,3],[0,4],[0,5],[0,6],[0,7],[1,3],[1,4],[1,5],[1,6]]},
     '遊樂設施':{cells:[[2,5],[2,6],[2,7],[2,8],[3,5],[3,6],[3,7],[3,8],[4,4],[4,5],[4,6],[4,7]]},
-    '花園':{cells:[[6,0],[6,1],[6,2],[7,0],[7,1],[7,2],[7,3],[8,0],[8,1],[8,2]]}
+    '花園':{cells:[[6,0],[6,1],[6,2],[7,0],[7,1],[7,2],[7,3],[8,0],[8,1],[8,2]]},
+    '後台':{cells:[[6,8],[6,9],[7,7],[7,8],[7,9],[8,6],[8,7],[8,8],[8,9],[9,6],[9,7],[9,8],[9,9]]}
   },
   regionLabels:{},
   decorations:[],
-  blocked:[{r:2,c:6,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:4,c:2,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:6,c:1,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:9,c:0,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:5,c:8,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:8,c:7,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:9,c:2,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:0,c:5,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:8,c:1,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:3,c:6,name:"旋轉木馬",img:"assets/scene-amusement/item-carousel.png"},{r:1,c:1,name:"閘門",img:"assets/scene-amusement/item-staff-door.png"},{r:5,c:4,name:"噴水池"}],
+  blocked:[{r:2,c:6,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:4,c:2,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:4,c:6,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:5,c:6,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:6,c:1,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:7,c:8,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:9,c:0,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:2,c:5,name:"樹",img:"assets/scene-amusement/item-tree.png"},{r:5,c:8,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:8,c:7,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:9,c:2,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:3,c:7,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:3,c:1,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:7,c:5,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:8,c:2,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:0,c:3,name:"路燈",img:"assets/scene-amusement/item-lamp.png"},{r:0,c:5,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:8,c:1,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:4,c:3,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:5,c:2,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:9,c:4,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:7,c:0,name:"垃圾桶",img:"assets/scene-amusement/item-trash-can.png"},{r:3,c:6,name:"旋轉木馬",img:"assets/scene-amusement/item-carousel.png"},{r:1,c:1,name:"閘門",img:"assets/scene-amusement/item-staff-door.png"},{r:5,c:4,name:"噴水池"}],
   standable:[{r:7,c:2,name:"長椅",img:"assets/scene-amusement/item-bench.png"},{r:6,c:2,name:"長椅",img:"assets/scene-amusement/item-bench.png"},{r:3,c:8,name:"長椅",img:"assets/scene-amusement/item-bench.png"}],
   suspects:[
-    {id:"A",name:"Alice",color:"#E63946",clue:"在一個垃圾桶旁邊，不在廣場",img:"assets/avatars/suspect-female-01.png"},
+    {id:"A",name:"Alice",color:"#E63946",clue:"在一個垃圾桶旁邊",img:"assets/avatars/suspect-female-01.png"},
     {id:"B",name:"Bob",color:"#457B9D",clue:"在旋轉木馬旁邊",img:"assets/avatars/suspect-male-01.png"},
     {id:"C",name:"Carol",color:"#2A9D8F",clue:"在閘門旁邊",img:"assets/avatars/suspect-female-02.png"},
     {id:"D",name:"Dave",color:"#E9C46A",clue:"在一盞路燈旁邊，在 Carol 的南邊",img:"assets/avatars/suspect-male-02.png"},
     {id:"E",name:"Eve",color:"#8338EC",clue:"在最右邊一列，在一盞路燈旁邊",img:"assets/avatars/suspect-female-03.png"},
     {id:"F",name:"Frank",color:"#F77F00",clue:"在最左邊一列，在一棵樹旁邊",img:"assets/avatars/suspect-male-03.png"},
-    {id:"G",name:"Grace",color:"#06D6A0",clue:"在一張長椅旁邊，在 Frank 的南邊",img:"assets/avatars/suspect-female-04.png"},
-    {id:"H",name:"Henry",color:"#118AB2",clue:"在一盞路燈旁邊，在 Grace 的南邊",img:"assets/avatars/suspect-male-04.png"},
+    {id:"G",name:"Grace",color:"#06D6A0",clue:"在一張長椅旁邊",img:"assets/avatars/suspect-female-04.png"},
+    {id:"H",name:"Henry",color:"#118AB2",clue:"在後台",img:"assets/avatars/suspect-male-04.png"},
     {id:"I",name:"Iris",color:"#FF006E",clue:"在一棵樹旁邊，在 Henry 的南邊",img:"assets/avatars/suspect-female-05.png"},
-    {id:"V",name:"Victor",color:"#808080",clue:"在一棵樹旁邊，不在花園，在 Bob 的東邊（被害者）",img:"assets/avatars/suspect-male-05.png"}
+    {id:"V",name:"Victor",color:"#808080",clue:"在一棵樹旁邊（被害者）",img:"assets/avatars/suspect-male-05.png"}
   ],
   solution:{A:[0,4],C:[1,2],V:[2,7],B:[3,5],D:[4,8],E:[5,9],F:[6,0],G:[7,3],H:[8,6],I:[9,1]},
   murderer:"B",murdererName:"Bob",
-  story:"Bob 在遊樂設施區與 Victor 獨處，趁人潮散去時犯下罪行！",
+  story:"Bob 在遊樂設施區與 Victor 獨處，趁人潮散去犯下罪行！",
   defaultRegion:"廣場",
   terrainOverrides:{},
-  regionTerrain:{"後台":"assets/common/terrain-dirt.png","售票處":"assets/scene-apartment/terrain-tile.png","美食":"assets/common/terrain-dirt.png","遊樂設施":"assets/common/terrain-grass.png","花園":"assets/common/terrain-grass.png","廣場":"assets/common/terrain-grass.png"}
+  regionTerrain:{"售票處":"assets/common/terrain-tile.png","美食":"assets/common/terrain-tile.png","遊樂設施":"assets/common/terrain-grass.png","花園":"assets/common/terrain-grass.png","後台":"assets/common/terrain-tile.png","廣場":"assets/common/terrain-stone-path.png"}
 };
 
 const PUZZLE_4={
