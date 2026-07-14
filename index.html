@@ -160,9 +160,9 @@ const PUZZLE_1={
   suspects:[
     {id:"A",name:"Adam",color:"#E63946",img:"assets/avatars/suspect-male-01.png",clue:'Adam 在第 5 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>',candidates:[[0,4],[1,4],[2,4],[4,4]]},
     {id:"B",name:"Beth",color:"#457B9D",img:"assets/avatars/suspect-female-01.png",clue:'Beth 跟花瓶<span class="keyword">旁邊<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>，且<span class="keyword">獨自<span class="kw-tooltip">該人所在的區域內沒有其他人</span></span>待著',candidates:[[0,2],[1,1]]},
-    {id:"C",name:"Carl",color:"#2A9D8F",img:"assets/avatars/suspect-male-02.png",clue:'Carl 在廚房，在 Diana 的<span class="keyword">北邊<span class="kw-tooltip">上方的任何格子（跨區域）</span></span>',candidates:[[2,3],[2,4],[2,5],[3,3],[3,5],[4,3],[4,4],[4,5],[5,3]]},
-    {id:"D",name:"Diana",color:"#E9C46A",img:"assets/avatars/suspect-female-02.png",clue:'Diana 跟冰箱<span class="keyword">旁邊<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>，在 Carl 的西邊',candidates:[[2,4],[3,3],[3,5],[4,4]]},
-    {id:"E",name:"Eric",color:"#8338EC",img:"assets/avatars/suspect-male-03.png",clue:'Eric 在 Victor 的<span class="keyword">北邊<span class="kw-tooltip">上方的任何格子（跨區域）</span></span>'},
+    XXX_TEMP,color:"#2A9D8F",img:"assets/avatars/suspect-male-02.png",clue:'Carl 在廚房，在 Diana 的<span class="keyword">北邊<span class="kw-tooltip">上方的任何格子（跨區域）</span></span>',candidates:[[2,3],[2,4],[2,5],[3,3],[3,5],[4,3],[4,4],[4,5],[5,3]]},
+    {id:"D",name:"Diana",color:"#E9C46A",img:"assets/avatars/suspect-female-02.png",relatedSuspects:["C"],clue:'Diana 跟冰箱<span class="keyword">旁邊<span class="kw-tooltip">左側、右側、上方或下方，且在同一區域內</span></span>，在 Carl 的西邊',candidates:[[2,4],[3,3],[3,5],[4,4]]},
+    {id:"E",name:"Eric",color:"#8338EC",img:"assets/avatars/suspect-male-03.png",relatedSuspects:["V"],clue:'Eric 在 Victor 的<span class="keyword">北邊<span class="kw-tooltip">上方的任何格子（跨區域）</span></span>'},
     {id:"V",name:"Victor",color:"#808080",img:"assets/avatars/suspect-male-04.png",clue:'Victor 在第 3 <span class="keyword">列<span class="kw-tooltip">一豎列格子</span></span>（被害者）',candidates:[[0,2],[2,2],[3,2],[4,2],[5,2]]}
   ],
   solution:{A:[0,4],B:[1,1],C:[2,5],D:[3,3],E:[4,0],V:[5,2]},
@@ -188,16 +188,16 @@ const PUZZLE_3={
   blocked:[{r:2,c:6,name:"樹",img:"assets/items/item-tree.png"},{r:4,c:2,name:"樹",img:"assets/items/item-tree.png"},{r:4,c:6,name:"樹",img:"assets/items/item-tree.png"},{r:5,c:6,name:"樹",img:"assets/items/item-tree.png"},{r:6,c:1,name:"樹",img:"assets/items/item-tree.png"},{r:7,c:8,name:"樹",img:"assets/items/item-tree.png"},{r:9,c:0,name:"樹",img:"assets/items/item-tree.png"},{r:2,c:5,name:"樹",img:"assets/items/item-tree.png"},{r:5,c:8,name:"路燈",img:"assets/items/item-street-lamp.png"},{r:8,c:7,name:"路燈",img:"assets/items/item-street-lamp.png"},{r:9,c:2,name:"路燈",img:"assets/items/item-street-lamp.png"},{r:3,c:7,name:"路燈",img:"assets/items/item-street-lamp.png"},{r:3,c:1,name:"路燈",img:"assets/items/item-street-lamp.png"},{r:7,c:5,name:"路燈",img:"assets/items/item-street-lamp.png"},{r:8,c:2,name:"路燈",img:"assets/items/item-street-lamp.png"},{r:0,c:3,name:"路燈",img:"assets/items/item-street-lamp.png"},{r:0,c:5,name:"垃圾桶",img:"assets/items/item-trash-can.png"},{r:8,c:1,name:"垃圾桶",img:"assets/items/item-trash-can.png"},{r:4,c:3,name:"垃圾桶",img:"assets/items/item-trash-can.png"},{r:5,c:2,name:"垃圾桶",img:"assets/items/item-trash-can.png"},{r:9,c:4,name:"垃圾桶",img:"assets/items/item-trash-can.png"},{r:7,c:0,name:"垃圾桶",img:"assets/items/item-trash-can.png"},{r:3,c:6,name:"旋轉木馬",img:"assets/items/item-carousel.png"},{r:1,c:1,name:"閘門",img:"assets/items/item-gate.png"},{r:5,c:4,name:"噴水池",img:"assets/items/item-fountain.png"}],
   standable:[{r:7,c:2,name:"長椅",img:"assets/items/item-bench.png"},{r:6,c:2,name:"長椅",img:"assets/items/item-bench.png"},{r:3,c:8,name:"長椅",img:"assets/items/item-bench.png"}],
   suspects:[
-    {id:"A",name:"Alice",color:"#E63946",clue:"在一個垃圾桶旁邊",img:"assets/avatars/suspect-female-01.png",candidates:[[0,4],[0,6],[1,5],[3,3],[5,1],[5,3],[6,0],[7,1],[8,0],[8,4],[9,3],[9,5]]},
+    {id:"A",name:"Alice",color:"#E63946",clue:"在垃圾桶旁邊",img:"assets/avatars/suspect-female-01.png",candidates:[[0,4],[0,6],[1,5],[3,3],[5,1],[5,3],[6,0],[7,1],[8,0],[8,4],[9,3],[9,5]]},
     {id:"B",name:"Bob",color:"#457B9D",clue:"在旋轉木馬旁邊",img:"assets/avatars/suspect-male-01.png",candidates:[[3,5]]},
     {id:"C",name:"Carol",color:"#2A9D8F",clue:"在閘門旁邊",img:"assets/avatars/suspect-female-02.png",candidates:[[0,1],[1,0],[1,2],[2,1]]},
-    {id:"D",name:"Dave",color:"#E9C46A",clue:"在一盞路燈旁邊，在 Carol 的南邊",img:"assets/avatars/suspect-male-02.png",candidates:[[0,4],[1,3],[2,7],[3,0],[3,2],[3,8],[4,1],[4,7],[4,8],[5,7],[5,9],[6,5],[7,2],[7,4],[7,6],[7,7],[8,5],[8,6],[8,8],[9,1],[9,3],[9,7]]},
-    {id:"E",name:"Eve",color:"#8338EC",clue:"在最右邊一列，在一盞路燈旁邊",img:"assets/avatars/suspect-female-03.png",candidates:[[5,9]]},
-    {id:"F",name:"Frank",color:"#F77F00",clue:"在最左邊一列，在一棵樹旁邊",img:"assets/avatars/suspect-male-03.png",candidates:[[6,0]]},
-    {id:"G",name:"Grace",color:"#06D6A0",clue:"在一張長椅旁邊",img:"assets/avatars/suspect-female-04.png",candidates:[[2,8],[6,2],[7,1],[7,2],[7,3]]},
+    {id:"D",name:"Dave",color:"#E9C46A",relatedSuspects:["C"],clue:"在路燈旁邊，在 Carol 的南邊",img:"assets/avatars/suspect-male-02.png",candidates:[[0,4],[1,3],[2,7],[3,0],[3,2],[3,8],[4,1],[4,7],[4,8],[5,7],[5,9],[6,5],[7,2],[7,4],[7,6],[7,7],[8,5],[8,6],[8,8],[9,1],[9,3],[9,7]]},
+    {id:"E",name:"Eve",color:"#8338EC",clue:"在最右邊一列，在路燈旁邊",img:"assets/avatars/suspect-female-03.png",candidates:[[5,9]]},
+    {id:"F",name:"Frank",color:"#F77F00",clue:"在最左邊一列，在樹旁邊",img:"assets/avatars/suspect-male-03.png",candidates:[[6,0]]},
+    {id:"G",name:"Grace",color:"#06D6A0",clue:"在長椅旁邊",img:"assets/avatars/suspect-female-04.png",candidates:[[2,8],[6,2],[7,1],[7,2],[7,3]]},
     {id:"H",name:"Henry",color:"#118AB2",clue:"在後台",img:"assets/avatars/suspect-male-04.png",candidates:[[6,8],[6,9],[7,7],[7,9],[8,6],[8,8],[8,9],[9,6],[9,7],[9,8],[9,9]]},
-    {id:"I",name:"Iris",color:"#FF006E",clue:"在一棵樹旁邊，在 Henry 的南邊",img:"assets/avatars/suspect-female-05.png",candidates:[[2,7],[3,2],[3,5],[4,1],[4,5],[4,7],[5,5],[5,7],[6,0],[6,2],[6,6],[6,8],[7,1],[7,7],[7,9],[8,8],[9,1]]},
-    {id:"V",name:"Victor",color:"#808080",clue:"在一棵樹旁邊（被害者）",img:"assets/avatars/suspect-male-05.png",candidates:[[2,7],[3,2],[3,5],[4,1],[4,5],[4,7],[5,5],[5,7],[6,0],[6,2],[6,6],[6,8],[7,1],[7,7],[7,9],[8,8],[9,1]]}
+    {id:"I",name:"Iris",color:"#FF006E",relatedSuspects:["H"],clue:"在樹旁邊，在 Henry 的南邊",img:"assets/avatars/suspect-female-05.png",candidates:[[2,7],[3,2],[3,5],[4,1],[4,5],[4,7],[5,5],[5,7],[6,0],[6,2],[6,6],[6,8],[7,1],[7,7],[7,9],[8,8],[9,1]]},
+    {id:"V",name:"Victor",color:"#808080",clue:"在樹旁邊（被害者）",img:"assets/avatars/suspect-male-05.png",candidates:[[2,7],[3,2],[3,5],[4,1],[4,5],[4,7],[5,5],[5,7],[6,0],[6,2],[6,6],[6,8],[7,1],[7,7],[7,9],[8,8],[9,1]]}
   ],
   solution:{A:[0,4],C:[1,2],V:[2,7],B:[3,5],D:[4,8],E:[5,9],F:[6,0],G:[7,3],H:[8,6],I:[9,1]},
   murderer:"B",murdererName:"Bob",
@@ -225,20 +225,20 @@ const PUZZLE_4={
   suspects:[
     {id:"A",name:"Alice",color:"#E63946",clue:"在吧台旁邊",img:"assets/avatars/suspect-female-01.png",candidates:[[0,13],[1,13]]},
     {id:"B",name:"Bob",color:"#457B9D",clue:"在餐桌旁邊",img:"assets/avatars/suspect-male-01.png",candidates:[[0,6],[0,8],[1,7]]},
-    {id:"C",name:"Carol",color:"#2A9D8F",clue:"在一根停車柱旁邊，在一個垃圾桶旁邊",img:"assets/avatars/suspect-female-02.png",candidates:[[0,2],[1,1],[2,2]]},
-    {id:"D",name:"Dave",color:"#E9C46A",clue:"在一棵椰子樹旁邊，在 Eve 的北邊",img:"assets/avatars/suspect-male-02.png"},
-    {id:"E",name:"Eve",color:"#8338EC",clue:"在一個置物櫃旁邊",img:"assets/avatars/suspect-female-03.png",candidates:[[3,5],[3,7],[4,6],[5,5],[5,7]]},
-    {id:"F",name:"Frank",color:"#F77F00",clue:"在一根排球網柱旁邊，在 Grace 的北邊",img:"assets/avatars/suspect-male-03.png"},
-    {id:"V",name:"Victor",color:"#808080",clue:"在一個繫船柱旁邊（被害者）",img:"assets/avatars/suspect-male-04.png",candidates:[[4,1],[6,0],[7,1]]},
-    {id:"K",name:"Kate",color:"#EF476F",clue:"在一個木箱旁邊，在 Victor 的南邊",img:"assets/avatars/suspect-female-06.png",candidates:[[7,1],[8,1],[9,0]]},
-    {id:"G",name:"Grace",color:"#06D6A0",clue:"在一根排球網柱旁邊，在 Frank 的南邊",img:"assets/avatars/suspect-female-04.png"},
-    {id:"H",name:"Henry",color:"#118AB2",clue:"在一棵椰子樹旁邊，在 Dave 的南邊",img:"assets/avatars/suspect-male-05.png"},
-    {id:"I",name:"Iris",color:"#FF006E",clue:"在一把遮陽傘旁邊，在 Henry 的南邊",img:"assets/avatars/suspect-female-05.png"},
-    {id:"J",name:"Jack",color:"#073B4C",clue:"在一棵椰子樹旁邊，在 Iris 的南邊",img:"assets/avatars/suspect-male-06.png"},
-    {id:"L",name:"Leo",color:"#06D6A0",clue:"在一把遮陽傘旁邊，在 Jack 的南邊",img:"assets/avatars/suspect-male-07.png"},
-    {id:"M",name:"Mia",color:"#FFD166",clue:"在一棵椰子樹旁邊，在 Leo 的南邊",img:"assets/avatars/suspect-female-07.png"},
-    {id:"N",name:"Nick",color:"#F4845F",clue:"在一塊岩石旁邊，在 Mia 的南邊",img:"assets/avatars/suspect-male-08.png"},
-    {id:"O",name:"Olivia",color:"#7B2CBF",clue:"在一塊岩石旁邊，在 Nick 的南邊",img:"assets/avatars/suspect-female-08.png"}
+    {id:"C",name:"Carol",color:"#2A9D8F",clue:"在停車柱旁邊，在垃圾桶旁邊",img:"assets/avatars/suspect-female-02.png",candidates:[[0,2],[1,1],[2,2]]},
+    {id:"D",name:"Dave",color:"#E9C46A",relatedSuspects:["E"],clue:"在椰子樹旁邊，在 Eve 的北邊",img:"assets/avatars/suspect-male-02.png"},
+    {id:"E",name:"Eve",color:"#8338EC",clue:"在置物櫃旁邊",img:"assets/avatars/suspect-female-03.png",candidates:[[3,5],[3,7],[4,6],[5,5],[5,7]]},
+    {id:"F",name:"Frank",color:"#F77F00",relatedSuspects:["G"],clue:"在排球網柱旁邊，在 Grace 的北邊",img:"assets/avatars/suspect-male-03.png"},
+    {id:"V",name:"Victor",color:"#808080",clue:"在繫船柱旁邊（被害者）",img:"assets/avatars/suspect-male-04.png",candidates:[[4,1],[6,0],[7,1]]},
+    {id:"K",name:"Kate",color:"#EF476F",relatedSuspects:["V"],clue:"在木箱旁邊，在 Victor 的南邊",img:"assets/avatars/suspect-female-06.png",candidates:[[7,1],[8,1],[9,0]]},
+    {id:"G",name:"Grace",color:"#06D6A0",relatedSuspects:["F"],clue:"在排球網柱旁邊，在 Frank 的南邊",img:"assets/avatars/suspect-female-04.png"},
+    {id:"H",name:"Henry",color:"#118AB2",relatedSuspects:["D"],clue:"在椰子樹旁邊，在 Dave 的南邊",img:"assets/avatars/suspect-male-05.png"},
+    {id:"I",name:"Iris",color:"#FF006E",relatedSuspects:["H"],clue:"在遮陽傘旁邊，在 Henry 的南邊",img:"assets/avatars/suspect-female-05.png"},
+    {id:"J",name:"Jack",color:"#073B4C",relatedSuspects:["I"],clue:"在椰子樹旁邊，在 Iris 的南邊",img:"assets/avatars/suspect-male-06.png"},
+    {id:"L",name:"Leo",color:"#06D6A0",relatedSuspects:["J"],clue:"在遮陽傘旁邊，在 Jack 的南邊",img:"assets/avatars/suspect-male-07.png"},
+    {id:"M",name:"Mia",color:"#FFD166",relatedSuspects:["L"],clue:"在椰子樹旁邊，在 Leo 的南邊",img:"assets/avatars/suspect-female-07.png"},
+    {id:"N",name:"Nick",color:"#F4845F",relatedSuspects:["M"],clue:"在岩石旁邊，在 Mia 的南邊",img:"assets/avatars/suspect-male-08.png"},
+    {id:"O",name:"Olivia",color:"#7B2CBF",relatedSuspects:["N"],clue:"在岩石旁邊，在 Nick 的南邊",img:"assets/avatars/suspect-female-08.png"}
   ],
   solution:{A:[0,13],B:[1,7],C:[2,2],D:[3,10],E:[4,6],F:[5,15],V:[6,0],K:[7,1],G:[8,12],H:[9,4],I:[10,8],J:[11,3],L:[12,11],M:[13,5],N:[14,9],O:[15,14]},
   murderer:"K",murdererName:"Kate",
@@ -316,10 +316,15 @@ function getConflicts(){
 function render(){computeAutoX();renderSuspects();renderBoard();updateSubmit()}
 function renderSuspects(){
   const sorted=[...PUZZLE.suspects].sort((a,b)=>{if(a.id==='V')return 1;if(b.id==='V')return -1;return a.id.localeCompare(b.id)});
+  const activeId=state.selected||state.hovered;
+  const activeSuspect=activeId?PUZZLE.suspects.find(s=>s.id===activeId):null;
+  const relatedIds=activeSuspect&&activeSuspect.relatedSuspects?activeSuspect.relatedSuspects:[];
   document.getElementById('suspects').innerHTML=sorted.map(s=>{
     const placed=Object.values(state.placements).includes(s.id);
     const sel=state.selected===s.id;
-    return`<div class="suspect-row ${sel?'selected':''} ${placed?'placed':''}" onmouseenter="hoverSuspect('${s.id}')" onmouseleave="unhoverSuspect()" onclick="selectSuspect('${s.id}')">
+    const isRelated=relatedIds.includes(s.id);
+    const relStyle=isRelated?'background:rgba(0,188,212,0.25)':'';
+    return`<div class="suspect-row ${sel?'selected':''} ${placed?'placed':''}" style="${relStyle}" onmouseenter="hoverSuspect('${s.id}')" onmouseleave="unhoverSuspect()" onclick="selectSuspect('${s.id}')">
       <div class="avatar"><img src="${s.img}" style="width:100%;height:100%;object-fit:cover;border-radius:4px"></div>
       <div class="info"><div class="name">${s.name}</div><div class="clue">${s.clue}</div></div></div>`;
   }).join('');
@@ -354,8 +359,8 @@ function renderBoard(){
 }
 
 function selectSuspect(id){if(state.solved)return;if(Object.values(state.placements).includes(id))return;if(state.xMode){state.xMode=false;document.getElementById('btn-x').classList.remove('active')}if(state.eraserMode){state.eraserMode=false;document.getElementById('btn-eraser').classList.remove('active')}state.selected=state.selected===id?null:id;state.hovered=null;render()}
-function hoverSuspect(id){if(state.selected)return;if(Object.values(state.placements).includes(id))return;state.hovered=id;renderBoard()}
-function unhoverSuspect(){if(state.hovered){state.hovered=null;renderBoard()}}
+function hoverSuspect(id){if(state.selected)return;if(Object.values(state.placements).includes(id))return;state.hovered=id;renderBoard();renderSuspects()}
+function unhoverSuspect(){if(state.hovered){state.hovered=null;renderBoard();renderSuspects()}}
 function toggleXMode(){if(state.solved)return;state.xMode=!state.xMode;if(state.xMode){state.selected=null;state.eraserMode=false;document.getElementById('btn-eraser').classList.remove('active')}document.getElementById('btn-x').classList.toggle('active',state.xMode);render()}
 function toggleEraserMode(){if(state.solved)return;state.eraserMode=!state.eraserMode;if(state.eraserMode){state.selected=null;state.xMode=false;document.getElementById('btn-x').classList.remove('active')}document.getElementById('btn-eraser').classList.toggle('active',state.eraserMode);render()}
 
